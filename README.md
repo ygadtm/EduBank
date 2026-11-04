@@ -1,11 +1,11 @@
-# EduBank – versi Next.js (tampilan saja)
+# EduBank - Web Bank Soal
 
 Syarat: Node.js 20 atau lebih baru (cek dengan `node -v`).
 
     npm install
     npm run dev
 
-Buka http://localhost:3000. Data masih contoh di `src/lib/data.ts`. Belum ada Prisma atau Supabase.
+Buka http://localhost:3000. Data masih contoh di `src/lib/data.ts`.
 
 ```
 src/app/page.tsx                  Login siswa dan guru
