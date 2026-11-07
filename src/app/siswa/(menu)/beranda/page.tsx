@@ -94,7 +94,7 @@ export default function Beranda() {
           href="/siswa/bank-soal"
           className="text-sm font-bold text-blue-700"
         >
-          Lihat Semua Modul →
+          Lihat Semua Soal →
         </Link>
       </div>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

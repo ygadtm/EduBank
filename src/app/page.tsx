@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { inp } from "@/components/ui";
@@ -48,8 +49,16 @@ export default function Login() {
               ? "Masuk ke ruang kelola belajar guru"
               : "Masuk ke ruang belajar ceria dan pintar"}
           </p>
-          <div className="mx-auto mt-4 grid h-36 place-items-center rounded-2xl bg-cyan-50 text-6xl">
-            {guru ? "👩‍🏫📚" : "🧒👧🧑"}
+          <div className="relative mx-auto mt-4 aspect-video max-h-52 w-full overflow-hidden rounded-2xl bg-cyan-50">
+            <Image
+              src={guru ? "/img/loginGuru.jpg" : "/img/loginSiswa.jpg"}
+              alt={guru ? "Ilustrasi guru" : "Ilustrasi siswa"}
+              fill
+              priority
+              sizes="(max-width: 448px) calc(100vw - 96px), 384px"
+              quality={85}
+              className="object-cover"
+            />
           </div>
         </div>
         <form
