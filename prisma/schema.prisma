@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  SISWA
+  GURU
+}
+
+enum StatusSoal {
+  DRAF
+  TERBIT
+}
+
+enum StatusPaketLatihan {
+  DRAF
+  TERBIT
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  nama               String
+  nisNip             String    @unique
+  password           String
+  role               Role      @default(SISWA)
+  kelas              Int?
+  aktif              Boolean   @default(true)
+  harusGantiPassword Boolean   @default(true)
+  lastLoginAt        DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  latihan            Latihan[]
+
+  @@index([role, kelas])
+}
+
+model Mapel {
+  id           String         @id @default(cuid())
+  slug         String         @unique
+  nama         String
+  deskripsi    String?
+  urutan       Int            @default(0)
+  soal         Soal[]
+  latihan      Latihan[]
+  paketLatihan PaketLatihan[]
+}
+
+model Soal {
+  id           String             @id @default(cuid())
+  mapelId      String
+  mapel        Mapel              @relation(fields: [mapelId], references: [id], onDelete: Restrict)
+  kelas        Int
+  topik        String?
+  teks         String
+  pembahasan   String?
+  status       StatusSoal         @default(DRAF)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  pilihan      Pilihan[]
+  jawaban      Jawaban[]
+  paketLatihan PaketLatihanSoal[]
+  latihanSoal  LatihanSoal[]
+
+  @@index([mapelId, kelas, status])
+}
+
+model Pilihan {
+  id      String    @id @default(cuid())
+  soalId  String
+  soal    Soal      @relation(fields: [soalId], references: [id], onDelete: Cascade)
+  teks    String
+  benar   Boolean   @default(false)
+  urutan  Int       @default(0)
+  jawaban Jawaban[]
+
+  @@index([soalId])
+}
+
+model PaketLatihan {
+  id          String             @id @default(cuid())
+  mapelId     String
+  mapel       Mapel              @relation(fields: [mapelId], references: [id], onDelete: Restrict)
+  kelas       Int
+  judul       String
+  deskripsi   String?
+  urutan      Int                @default(0)
+  durasiMenit Int                @default(5)
+  status      StatusPaketLatihan @default(DRAF)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  soal        PaketLatihanSoal[]
+  latihan     Latihan[]
+
+  @@unique([mapelId, kelas, judul])
+  @@index([mapelId, kelas, status, urutan])
+}
+
+model PaketLatihanSoal {
+  paketId String
+  paket   PaketLatihan @relation(fields: [paketId], references: [id], onDelete: Cascade)
+  soalId  String
+  soal    Soal         @relation(fields: [soalId], references: [id], onDelete: Cascade)
+  urutan  Int          @default(0)
+
+  @@id([paketId, soalId])
+  @@index([soalId])
+}
+
+model Latihan {
+  id      String        @id @default(cuid())
+  siswaId String
+  siswa   User          @relation(fields: [siswaId], references: [id], onDelete: Cascade)
+  paketId String?
+  paket   PaketLatihan? @relation(fields: [paketId], references: [id], onDelete: Restrict)
+  mapelId String
+  mapel   Mapel         @relation(fields: [mapelId], references: [id], onDelete: Restrict)
+  kelas   Int
+  mulai   DateTime      @default(now())
+  selesai DateTime?
+  jawaban Jawaban[]
+  soal    LatihanSoal[]
+
+  @@index([siswaId, mulai])
+  @@index([mapelId, kelas])
+  @@index([paketId])
+}
+
+model LatihanSoal {
+  latihanId String
+  latihan   Latihan @relation(fields: [latihanId], references: [id], onDelete: Cascade)
+  soalId    String
+  soal      Soal    @relation(fields: [soalId], references: [id], onDelete: Restrict)
+  urutan    Int     @default(0)
+
+  @@id([latihanId, soalId])
+  @@index([soalId])
+}
+
+model Jawaban {
+  id        String   @id @default(cuid())
+  latihanId String
+  latihan   Latihan  @relation(fields: [latihanId], references: [id], onDelete: Cascade)
+  soalId    String
+  soal      Soal     @relation(fields: [soalId], references: [id], onDelete: Restrict)
+  pilihanId String?
+  pilihan   Pilihan? @relation(fields: [pilihanId], references: [id], onDelete: SetNull)
+  benar     Boolean
+  createdAt DateTime @default(now())
+
+  @@unique([latihanId, soalId])
+  @@index([soalId])
+}

@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { SUBJECTS } from "@/lib/data";
 
 export const card =
   "rounded-2xl bg-white shadow-[0_2px_12px_rgba(30,64,175,.08)]";
@@ -64,14 +63,21 @@ export function Stat({
   );
 }
 
-export function MapelBadge({ i }: { i: number }) {
-  const s = SUBJECTS[i];
+export function MapelBadge({
+  nama,
+  color = "#2563eb",
+  bg = "#eff6ff",
+}: {
+  nama: string;
+  color?: string;
+  bg?: string;
+}) {
   return (
     <span
       className="whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold"
-      style={{ background: s.bg, color: s.c }}
+      style={{ background: bg, color }}
     >
-      {s.n}
+      {nama}
     </span>
   );
 }

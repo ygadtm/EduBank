@@ -1,0 +1,56 @@
+export type MapelMeta = {
+  nama: string;
+  icon: string;
+  color: string;
+  bg: string;
+};
+
+export const MAPEL_META: Record<string, MapelMeta> = {
+  "bahasa-indonesia": {
+    nama: "Bahasa Indonesia",
+    icon: "📖",
+    color: "#dc2626",
+    bg: "#fef2f2",
+  },
+  ipa: {
+    nama: "IPA Terpadu / IPAS",
+    icon: "🌿",
+    color: "#059669",
+    bg: "#ecfdf5",
+  },
+  matematika: {
+    nama: "Matematika",
+    icon: "🧮",
+    color: "#2563eb",
+    bg: "#eff6ff",
+  },
+  ips: {
+    nama: "IPS Terpadu",
+    icon: "🌏",
+    color: "#0284c7",
+    bg: "#f0f9ff",
+  },
+  ppkn: {
+    nama: "Tematik & PPKn",
+    icon: "🛡️",
+    color: "#d97706",
+    bg: "#fffbeb",
+  },
+  "bahasa-inggris": {
+    nama: "Bahasa Inggris",
+    icon: "🔤",
+    color: "#9333ea",
+    bg: "#faf5ff",
+  },
+};
+
+const fallback: MapelMeta = {
+  nama: "Mapel",
+  icon: "📘",
+  color: "#2563eb",
+  bg: "#eff6ff",
+};
+
+export function mapelMeta(slug: string) {
+  return MAPEL_META[slug] ?? fallback;
+}

@@ -1,6 +1,6 @@
-"use client";
+import type { Prisma, StatusSoal } from "@prisma/client";
 import Link from "next/link";
-import { DAFTAR_SOAL, SUBJECTS } from "@/lib/data";
+import HapusSoalButton from "@/components/hapus-soal-button";
 import {
   MapelBadge,
   PageHead,
@@ -10,26 +10,63 @@ import {
   card,
   inp,
 } from "@/components/ui";
+import { prisma } from "@/lib/db";
+import { getMapelRingkas } from "@/lib/cache";
+import { mapelMeta } from "@/lib/mapel";
 
-export default function KelolaSoal() {
-  const rows = DAFTAR_SOAL.map((d) => [
-    d.q,
-    <MapelBadge key="m" i={d.m} />,
-    `Kelas ${d.k}`,
-    <StatusBadge key="s" s={d.s} />,
-    d.t,
-    <span key="a" className="font-bold">
-      <Link href="/guru/soal-form" className="text-blue-700">
-        Ubah
-      </Link>
-      <button
-        onClick={() => confirm("Hapus soal ini?")}
-        className="ml-2 text-red-500"
-      >
-        Hapus
-      </button>
-    </span>,
-  ]);
+type Params = {
+  q?: string;
+  mapel?: string;
+  kelas?: string;
+  status?: string;
+};
+
+export default async function KelolaSoal({
+  searchParams,
+}: {
+  searchParams: Promise<Params>;
+}) {
+  const params = await searchParams;
+  const q = typeof params.q === "string" ? params.q : "";
+  const mapel = typeof params.mapel === "string" ? params.mapel : "";
+  const kelas = params.kelas === "5" || params.kelas === "6" ? params.kelas : "";
+  const status =
+    params.status === "TERBIT" || params.status === "DRAF" ? params.status : "";
+
+  const where: Prisma.SoalWhereInput = {};
+  if (q) where.teks = { contains: q, mode: "insensitive" };
+  if (mapel) where.mapel = { slug: mapel };
+  if (kelas) where.kelas = Number(kelas);
+  if (status) where.status = status as StatusSoal;
+
+  const mapels = await getMapelRingkas();
+  const soal = await prisma.soal.findMany({
+    where,
+    orderBy: { updatedAt: "desc" },
+    include: { mapel: true },
+  });
+
+  const rows = soal.map((d) => {
+    const meta = mapelMeta(d.mapel.slug);
+    return [
+      d.teks,
+      <MapelBadge key="m" nama={d.mapel.nama} color={meta.color} bg={meta.bg} />,
+      `Kelas ${d.kelas}`,
+      <StatusBadge key="s" s={d.status === "TERBIT" ? "Terbit" : "Draf"} />,
+      d.updatedAt.toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }),
+      <span key="a" className="font-bold">
+        <Link href={`/guru/soal-form?id=${d.id}`} className="text-blue-700">
+          Ubah
+        </Link>
+        <HapusSoalButton id={d.id} />
+      </span>,
+    ];
+  });
+
   return (
     <>
       <PageHead
@@ -42,28 +79,33 @@ export default function KelolaSoal() {
         </Link>
       </PageHead>
       <section className={`${card} mt-5`}>
-        <div className="flex flex-wrap gap-3 p-5">
+        <form className="flex flex-wrap gap-3 p-5">
           <input
+            name="q"
+            defaultValue={q}
             placeholder="Cari soal..."
             className={`${inp} min-w-[200px] flex-1`}
           />
-          <select className={inp}>
-            <option>Semua Mapel</option>
-            {SUBJECTS.map((s) => (
-              <option key={s.n}>{s.n}</option>
+          <select name="mapel" defaultValue={mapel} className={inp}>
+            <option value="">Semua Mapel</option>
+            {mapels.map((s) => (
+              <option key={s.id} value={s.slug}>
+                {s.nama}
+              </option>
             ))}
           </select>
-          <select className={inp}>
-            <option>Semua Kelas</option>
-            <option>Kelas 5</option>
-            <option>Kelas 6</option>
+          <select name="kelas" defaultValue={kelas} className={inp}>
+            <option value="">Semua Kelas</option>
+            <option value="5">Kelas 5</option>
+            <option value="6">Kelas 6</option>
           </select>
-          <select className={inp}>
-            <option>Semua Status</option>
-            <option>Terbit</option>
-            <option>Draf</option>
+          <select name="status" defaultValue={status} className={inp}>
+            <option value="">Semua Status</option>
+            <option value="TERBIT">Terbit</option>
+            <option value="DRAF">Draf</option>
           </select>
-        </div>
+          <button className={btn}>Terapkan</button>
+        </form>
         <Tabel
           head={["Soal", "Mapel", "Kelas", "Status", "Diperbarui", "Aksi"]}
           rows={rows}

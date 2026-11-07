@@ -1,7 +1,9 @@
 "use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
+import { logout } from "@/lib/actions/auth";
 
 const NAV = {
   siswa: [
@@ -12,6 +14,7 @@ const NAV = {
   guru: [
     ["beranda", "Beranda", "🏠"],
     ["soal", "Kelola Soal", "📝"],
+    ["latihan", "Paket Latihan", "📚"],
     ["siswa", "Siswa", "👥"],
     ["rekap", "Rekap Nilai", "📊"],
   ],
@@ -19,24 +22,21 @@ const NAV = {
 
 export default function AppShell({
   role,
+  user,
   children,
 }: {
   role: "siswa" | "guru";
+  user: { nama: string; kelas: number | null };
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
-  const [nama, setNama] = useState("Isnaini Febriana");
-  const [kelas, setKelas] = useState("6");
   const path = usePathname();
   const nav = NAV[role];
   const aktif = (k: string) =>
     path.startsWith(`/${role}/${k}`) ||
-    (k === "bank-soal" && path.includes("hasil-latihan"));
-  useEffect(() => {
-    setNama(localStorage.getItem("kapsel-name") || "Isnaini Febriana");
-    setKelas(localStorage.getItem("kapsel-kelas") || "6");
-  }, []);
-  const label = role === "guru" ? "Guru" : `Kelas ${kelas} SD`;
+    (k === "bank-soal" && path.includes("hasil-latihan")) ||
+    (k === "latihan" && path.startsWith(`/${role}/latihan-form`));
+  const label = role === "guru" ? "Guru" : `Kelas ${user.kelas ?? "-"} SD`;
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#f4f7fc]">
@@ -57,7 +57,7 @@ export default function AppShell({
           <div className="mx-auto grid h-14 w-14 place-items-center rounded-xl bg-blue-400/60 text-3xl">
             📖
           </div>
-          <p className="mt-2 text-sm font-bold">{nama}</p>
+          <p className="mt-2 text-sm font-bold">{user.nama}</p>
           <span className="mt-1 inline-block rounded-full bg-white/20 px-3 py-0.5 text-[11px] font-semibold">
             {label}
           </span>
@@ -74,13 +74,11 @@ export default function AppShell({
             </Link>
           ))}
         </nav>
-        <Link
-          href="/"
-          onClick={() => localStorage.clear()}
-          className="mt-auto rounded-xl px-4 py-3 text-sm font-semibold text-blue-100 hover:bg-white/10"
-        >
-          🚪 Keluar
-        </Link>
+        <form action={logout} className="mt-auto">
+          <button className="w-full rounded-xl px-4 py-3 text-left text-sm font-semibold text-blue-100 hover:bg-white/10">
+            🚪 Keluar
+          </button>
+        </form>
       </aside>
       {open && (
         <div
@@ -100,7 +98,7 @@ export default function AppShell({
           <b className="text-blue-700">EduBank</b>
         </div>
         <div className="text-right text-xs">
-          <b className="block">{nama}</b>
+          <b className="block">{user.nama}</b>
           <span className="font-semibold text-blue-700">{label}</span>
         </div>
       </header>

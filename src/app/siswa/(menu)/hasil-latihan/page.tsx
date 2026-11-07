@@ -1,12 +1,10 @@
-"use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { SUBJECTS } from "@/lib/data";
-import { SOAL } from "@/lib/soal";
+import { redirect } from "next/navigation";
 import { card } from "@/components/ui";
+import { requireSiswa } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+import { mapelMeta } from "@/lib/mapel";
 
-type Hasil = { m: number; jaw: (number | null)[]; detik: number };
 const pesan = [
   "Jangan menyerah, ayo coba lagi!",
   "Bagus, terus berlatih ya!",
@@ -15,30 +13,70 @@ const pesan = [
 ];
 const w = (n: number) => String(n).padStart(2, "0");
 
-export default function HasilLatihan() {
-  const router = useRouter();
-  const [h, setH] = useState<Hasil | null>(null);
-  useEffect(() => {
-    const r = localStorage.getItem("kapsel-hasil");
-    if (r) setH(JSON.parse(r));
-    else router.replace("/siswa/bank-soal");
-  }, [router]);
-  if (!h) return null;
+export default async function HasilLatihan({
+  searchParams,
+}: {
+  searchParams: Promise<{ id?: string }>;
+}) {
+  const user = await requireSiswa();
+  const { id } = await searchParams;
 
-  const s = SUBJECTS[h.m];
-  const Q = SOAL[h.m];
-  const ok = Q.filter((q, k) => h.jaw[k] === q.a).length;
-  const b = ok === Q.length ? 3 : ok >= 2 ? 2 : ok >= 1 ? 1 : 0;
+  const latihan = await prisma.latihan.findFirst({
+    where: {
+      siswaId: user.id,
+      selesai: { not: null },
+      ...(id ? { id } : {}),
+    },
+    orderBy: { selesai: "desc" },
+    include: {
+      mapel: true,
+      paket: { select: { id: true } },
+      jawaban: {
+        include: {
+          pilihan: true,
+          soal: {
+            include: {
+              pilihan: { orderBy: { urutan: "asc" } },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!latihan || !latihan.selesai) redirect("/siswa/bank-soal");
+
+  const jawaban = [...latihan.jawaban].sort(
+    (a, b) =>
+      a.soal.createdAt.getTime() - b.soal.createdAt.getTime() ||
+      a.soal.id.localeCompare(b.soal.id),
+  );
+  const ok = jawaban.filter((j) => j.benar).length;
+  const total = jawaban.length;
+  const b =
+    total > 0 && ok === total
+      ? 3
+      : ok >= Math.ceil(total * (2 / 3))
+        ? 2
+        : ok >= 1
+          ? 1
+          : 0;
+  const detik = Math.max(
+    0,
+    Math.round((latihan.selesai.getTime() - latihan.mulai.getTime()) / 1000),
+  );
+  const meta = mapelMeta(latihan.mapel.slug);
   const ringkas: [string, string | number][] = [
     ["Benar", ok],
-    ["Salah", Q.length - ok],
-    ["Waktu", `${w(Math.floor(h.detik / 60))}:${w(h.detik % 60)}`],
+    ["Salah", total - ok],
+    ["Waktu", `${w(Math.floor(detik / 60))}:${w(detik % 60)}`],
   ];
+
   return (
     <>
       <section className={`${card} mx-auto max-w-2xl p-8 text-center`}>
-        <p className="text-sm font-semibold" style={{ color: s.c }}>
-          {s.i} {s.n}
+        <p className="text-sm font-semibold" style={{ color: meta.color }}>
+          {meta.icon} {latihan.mapel.nama}
         </p>
         <div className="my-3 text-5xl">
           {"⭐".repeat(b)}
@@ -46,7 +84,7 @@ export default function HasilLatihan() {
         </div>
         <h1 className="text-2xl font-extrabold">{pesan[b]}</h1>
         <p className="mt-1 text-slate-500">
-          Kamu menjawab {ok} dari {Q.length} soal dengan benar.
+          Kamu menjawab {ok} dari {total} soal dengan benar.
         </p>
         <div className="mt-6 grid grid-cols-3 gap-3">
           {ringkas.map(([l, v]) => (
@@ -57,13 +95,15 @@ export default function HasilLatihan() {
           ))}
         </div>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <Link
-            href={`/siswa/kerjakan-soal?m=${h.m}`}
-            className="rounded-xl px-6 py-3 text-sm font-bold text-white"
-            style={{ background: s.c }}
-          >
-            Coba Lagi
-          </Link>
+          {latihan.paket && (
+            <Link
+              href={`/siswa/kerjakan-soal?paket=${latihan.paket.id}`}
+              className="rounded-xl px-6 py-3 text-sm font-bold text-white"
+              style={{ background: meta.color }}
+            >
+              Coba Lagi
+            </Link>
+          )}
           <Link
             href="/siswa/bank-soal"
             className="rounded-xl bg-blue-50 px-6 py-3 text-sm font-bold text-blue-700"
@@ -76,26 +116,25 @@ export default function HasilLatihan() {
         Review Jawaban
       </h2>
       <div className="mx-auto mt-3 max-w-2xl space-y-3">
-        {Q.map((q, k) => {
-          const j = h.jaw[k];
-          const y = j === q.a;
+        {jawaban.map((j, k) => {
+          const benar = j.soal.pilihan.find((p) => p.benar);
           return (
-            <div key={k} className={`${card} p-5`}>
+            <div key={j.id} className={`${card} p-5`}>
               <p className="font-bold">
-                {y ? "✅" : "❌"} {k + 1}. {q.q}
+                {j.benar ? "✅" : "❌"} {k + 1}. {j.soal.teks}
               </p>
               <p
-                className={`mt-2 text-sm ${y ? "text-emerald-700" : "text-red-600"}`}
+                className={`mt-2 text-sm ${j.benar ? "text-emerald-700" : "text-red-600"}`}
               >
-                Jawabanmu: {j === null ? "Belum dijawab" : q.o[j]}
+                Jawabanmu: {j.pilihan?.teks ?? "Belum dijawab"}
               </p>
-              {!y && (
+              {!j.benar && (
                 <p className="text-sm text-emerald-700">
-                  Jawaban benar: {q.o[q.a]}
+                  Jawaban benar: {benar?.teks ?? "-"}
                 </p>
               )}
               <p className="mt-2 rounded-xl bg-slate-50 p-3 text-sm text-slate-600">
-                💡 {q.e}
+                💡 {j.soal.pembahasan ?? "Tidak ada pembahasan."}
               </p>
             </div>
           );

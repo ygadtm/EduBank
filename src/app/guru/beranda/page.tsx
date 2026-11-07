@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { Nama } from "@/components/klien";
-import { DAFTAR_SOAL, SUBJECTS } from "@/lib/data";
+import { requireGuru } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+import { getStatistikGuru } from "@/lib/cache";
+import { mapelMeta } from "@/lib/mapel";
 import {
   Bar,
   MapelBadge,
@@ -15,35 +17,54 @@ const aksi = [
   ["/guru/siswa", "📥", "Impor Data Siswa"],
   ["/guru/rekap", "📈", "Lihat Rekap Nilai"],
 ];
-const rata = [88, 79, 72, 81, 90, 76];
 
-export default function BerandaGuru() {
+export default async function BerandaGuru() {
+  const user = await requireGuru();
   const tgl = new Date().toLocaleDateString("id-ID", {
     weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
   });
-  const rows = DAFTAR_SOAL.slice(0, 5).map((d) => [
-    d.q,
-    <MapelBadge key="m" i={d.m} />,
-    `Kelas ${d.k}`,
-    <StatusBadge key="s" s={d.s} />,
-    d.t,
-  ]);
+
+  const { totalSoal, totalSiswa, totalJawaban, totalBenar, mapels, perMapel } =
+    await getStatistikGuru();
+  const soalTerbaru = await prisma.soal.findMany({
+    take: 5,
+    orderBy: { updatedAt: "desc" },
+    include: { mapel: true },
+  });
+
+  const rata = totalJawaban
+    ? Math.round((totalBenar / totalJawaban) * 100)
+    : 0;
+
+  const rows = soalTerbaru.map((s) => {
+    const meta = mapelMeta(s.mapel.slug);
+    return [
+      s.teks,
+      <MapelBadge key="m" nama={s.mapel.nama} color={meta.color} bg={meta.bg} />,
+      `Kelas ${s.kelas}`,
+      <StatusBadge key="s" s={s.status === "TERBIT" ? "Terbit" : "Draf"} />,
+      s.updatedAt.toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }),
+    ];
+  });
+
   return (
     <>
       <p className="text-xs text-slate-500">📅 {tgl}</p>
-      <h1 className="text-3xl font-extrabold">
-        Halo, <Nama depan />!
-      </h1>
+      <h1 className="text-3xl font-extrabold">Halo, {user.nama}!</h1>
       <p className="text-sm text-slate-500">
         Kelola soal dan pantau perkembangan belajar siswa.
       </p>
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <Stat label="Total Soal" value={120} unit="Soal" icon="📝" />
-        <Stat label="Jumlah Siswa" value={32} unit="Siswa" icon="👥" />
-        <Stat label="Rata-rata Nilai" value={78} unit="Poin" icon="📊" />
+        <Stat label="Total Soal" value={totalSoal} unit="Soal" icon="📝" />
+        <Stat label="Jumlah Siswa" value={totalSiswa} unit="Siswa" icon="👥" />
+        <Stat label="Rata-rata Nilai" value={rata} unit="Poin" icon="📊" />
       </div>
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
         {aksi.map(([href, ikon, teks]) => (
@@ -73,14 +94,21 @@ export default function BerandaGuru() {
         <section className={`${card} p-5`}>
           <h2 className="font-bold">Rata-rata Nilai per Mapel</h2>
           <div className="mt-4 space-y-3">
-            {SUBJECTS.map((s, i) => (
-              <div key={s.n}>
-                <p className="mb-1 text-xs font-semibold text-slate-600">
-                  {s.n}
-                </p>
-                <Bar v={rata[i]} c={s.c} />
-              </div>
-            ))}
+            {mapels.map((s) => {
+              const meta = mapelMeta(s.slug);
+              const data = perMapel[s.id];
+              const nilai = data?.total
+                ? Math.round((data.benar / data.total) * 100)
+                : 0;
+              return (
+                <div key={s.id}>
+                  <p className="mb-1 text-xs font-semibold text-slate-600">
+                    {s.nama}
+                  </p>
+                  <Bar v={nilai} c={meta.color} />
+                </div>
+              );
+            })}
           </div>
         </section>
       </div>

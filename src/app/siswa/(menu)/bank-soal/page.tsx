@@ -1,47 +1,59 @@
 import Link from "next/link";
-import { SUBJECTS } from "@/lib/data";
+import { requireSiswa } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+import { mapelMeta } from "@/lib/mapel";
 import { PageHead, card } from "@/components/ui";
 
-export default function BankSoal() {
+export default async function BankSoal() {
+  const user = await requireSiswa();
+
+  const mapels = await prisma.mapel.findMany({
+    orderBy: { urutan: "asc" },
+    select: {
+      id: true,
+      slug: true,
+      nama: true,
+      deskripsi: true,
+      _count: {
+        select: {
+          paketLatihan: { where: { kelas: user.kelas ?? 6, status: "TERBIT" } },
+        },
+      },
+    },
+  });
+
   return (
     <>
       <PageHead
         icon="❓"
         title="Bank Soal & Latihan"
-        sub="Pilih mata pelajaran dan mulai latihan soal seru!"
+        sub="Pilih mata pelajaran untuk melihat paket latihan."
       />
-      <section className="mt-5 flex items-center gap-4 rounded-2xl bg-linear-to-r from-blue-600 to-indigo-700 p-5 text-white">
-        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-white/20 text-xl">
-          ⭐
-        </span>
-        <div>
-          <b>Tips Latihan Hari Ini:</b>
-          <p className="text-sm text-blue-100">
-            Kerjakan soal secara santai dan teliti. Setiap kuis yang kamu
-            selesaikan akan menambah bintang prestasimu!
-          </p>
-        </div>
-      </section>
-      <div className="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-        {SUBJECTS.map((s, i) => (
-          <article key={s.n} className={`${card} flex flex-col p-6`}>
-            <span
-              className="grid h-12 w-12 place-items-center rounded-xl border text-xl"
-              style={{ background: s.bg, borderColor: `${s.c}22` }}
+      <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {mapels.map((m) => {
+          const meta = mapelMeta(m.slug);
+          const jumlah = m._count.paketLatihan;
+          return (
+            <Link
+              key={m.id}
+              href={`/siswa/bank-soal/${m.slug}`}
+              className={`${card} flex flex-col p-6 transition-all hover:ring-2`}
+              style={{ ["--tw-ring-color" as string]: meta.color }}
             >
-              {s.i}
-            </span>
-            <h2 className="mt-4 text-lg font-bold">{s.n}</h2>
-            <p className="mt-2 flex-1 text-sm text-slate-500">{s.d}</p>
-            <a
-              href={`/siswa/kerjakan-soal?m=${i}`}
-              className="mt-5 rounded-xl py-3 text-center text-sm font-bold text-white shadow-md"
-              style={{ background: s.c }}
-            >
-              Mulai Kerjakan Soal
-            </a>
-          </article>
-        ))}
+              <div
+                className="grid h-16 w-16 place-items-center rounded-2xl text-3xl"
+                style={{ background: meta.bg }}
+              >
+                {meta.icon}
+              </div>
+              <h2 className="mt-4 text-lg font-bold">{m.nama}</h2>
+              <p className="mt-1 flex-1 text-sm text-slate-500">{m.deskripsi}</p>
+              <p className="mt-3 text-xs font-semibold" style={{ color: meta.color }}>
+                {jumlah === 0 ? "Belum ada paket" : `${jumlah} paket tersedia →`}
+              </p>
+            </Link>
+          );
+        })}
       </div>
     </>
   );
