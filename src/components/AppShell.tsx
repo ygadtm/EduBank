@@ -7,16 +7,16 @@ import { logout } from "@/lib/actions/auth";
 
 const NAV = {
   siswa: [
-    ["beranda", "Beranda", "🏠"],
-    ["bank-soal", "Bank Soal", "📖"],
-    ["materi", "Materi", "📅"],
+    ["beranda", "Beranda"],
+    ["bank-soal", "Bank Soal"],
+    ["materi", "Materi"],
   ],
   guru: [
-    ["beranda", "Beranda", "🏠"],
-    ["soal", "Kelola Soal", "📝"],
-    ["latihan", "Paket Latihan", "📚"],
-    ["siswa", "Siswa", "👥"],
-    ["rekap", "Rekap Nilai", "📊"],
+    ["beranda", "Beranda"],
+    ["soal", "Kelola Soal"],
+    ["latihan", "Paket Latihan"],
+    ["siswa", "Siswa"],
+    ["rekap", "Rekap Nilai"],
   ],
 } as const;
 
@@ -63,14 +63,14 @@ export default function AppShell({
           </span>
         </div>
         <nav className="mt-6 space-y-1">
-          {nav.map(([k, n, i]) => (
+          {nav.map(([k, n]) => (
             <Link
               key={k}
               href={`/${role}/${k}`}
               onClick={() => setOpen(false)}
               className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold ${aktif(k) ? "bg-white text-blue-700" : "text-blue-100 hover:bg-white/10"}`}
             >
-              {i} {n}
+               {n}
             </Link>
           ))}
         </nav>
@@ -104,13 +104,13 @@ export default function AppShell({
       </header>
       <main className="p-4 pb-24 md:ml-60 md:p-8">{children}</main>
       <nav className="fixed inset-x-0 bottom-0 flex gap-1 border-t border-slate-200 bg-white p-2 md:hidden">
-        {nav.map(([k, n, i]) => (
+        {nav.map(([k, n]) => (
           <Link
             key={k}
             href={`/${role}/${k}`}
             className={`flex flex-1 flex-col items-center rounded-xl py-1.5 text-[11px] font-semibold ${aktif(k) ? "bg-blue-100 text-blue-700" : "text-slate-500"}`}
           >
-            <span className="text-lg">{i}</span>
+            <span className="text-lg"></span>
             {n}
           </Link>
         ))}
