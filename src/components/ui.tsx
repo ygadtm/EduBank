@@ -1,3 +1,4 @@
+
 import type { ReactNode } from "react";
 
 export const card =
@@ -13,7 +14,7 @@ export function PageHead({
   sub,
   children,
 }: {
-  icon: string;
+  icon?: string;
   title: string;
   sub: string;
   children?: ReactNode;
@@ -23,9 +24,11 @@ export function PageHead({
       className={`${card} flex flex-wrap items-center justify-between gap-4 p-5`}
     >
       <div className="flex items-center gap-4">
-        <div className="grid h-12 w-12 place-items-center rounded-xl border border-blue-100 bg-blue-50 text-xl">
-          {icon}
-        </div>
+        {icon && (
+          <div className="grid h-12 w-12 place-items-center rounded-xl border border-blue-100 bg-blue-50 text-xl">
+            {icon}
+          </div>
+        )}
         <div>
           <h1 className="text-2xl font-extrabold">{title}</h1>
           <p className="text-sm text-slate-500">{sub}</p>
@@ -45,15 +48,17 @@ export function Stat({
   label: string;
   value: number;
   unit: string;
-  icon: string;
+  icon?: string;
 }) {
   return (
     <div className={`${card} p-5`}>
       <div className="flex justify-between text-sm font-semibold text-slate-600">
         {label}
-        <span className="grid h-9 w-9 place-items-center rounded-lg bg-blue-50">
-          {icon}
-        </span>
+        {icon && (
+          <span className="grid h-9 w-9 place-items-center rounded-lg bg-blue-50">
+            {icon}
+          </span>
+        )}
       </div>
       <p className="mt-3 text-3xl font-extrabold">
         {value}{" "}
@@ -87,6 +92,7 @@ export function StatusBadge({ s }: { s: string }) {
     s === "Terbit"
       ? "bg-emerald-100 text-emerald-700"
       : "bg-amber-100 text-amber-700";
+
   return (
     <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${warna}`}>
       {s}
@@ -94,8 +100,14 @@ export function StatusBadge({ s }: { s: string }) {
   );
 }
 
-// Tabel di desktop, kartu per baris di HP. Label kolom otomatis dari judul kolom.
-export function Tabel({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
+// Tabel di desktop, kartu per baris di HP.
+export function Tabel({
+  head,
+  rows,
+}: {
+  head: string[];
+  rows: ReactNode[][];
+}) {
   return (
     <div className="md:overflow-x-auto">
       <table className="block w-full text-left text-sm md:table">
