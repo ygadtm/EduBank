@@ -44,15 +44,15 @@ export default async function HalamanKuis({
 
   if (paket.soal.length === 0) {
     return (
-      <div className="grid min-h-screen place-items-center bg-[#f4f7fc] p-4">
+      <div className="grid min-h-screen place-items-center bg-paper p-4">
         <div className={`${card} max-w-md p-8 text-center`}>
-          <h1 className="text-xl font-extrabold">Belum ada soal</h1>
-          <p className="mt-2 text-sm text-slate-500">
+          <h1 className="text-[22px] font-bold leading-[30px] text-ink">Belum ada soal</h1>
+          <p className="mt-2 text-sm text-muted">
             Paket latihan ini belum berisi soal.
           </p>
           <Link
             href="/siswa/bank-soal"
-            className="mt-4 inline-block rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white"
+            className="mt-4 inline-block rounded bg-accent px-5 py-2.5 text-sm font-semibold text-accent-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus"
           >
             Kembali
           </Link>

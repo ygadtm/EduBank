@@ -13,9 +13,9 @@ import {
 } from "@/components/ui";
 
 const aksi = [
-  ["/guru/soal-form", "➕", "Buat Soal Baru"],
-  ["/guru/siswa", "📥", "Impor Data Siswa"],
-  ["/guru/rekap", "📈", "Lihat Rekap Nilai"],
+  ["/guru/soal-form", "Buat Soal Baru"],
+  ["/guru/siswa", "Data Siswa"],
+  ["/guru/rekap", "Lihat Rekap Nilai"],
 ];
 
 export default async function BerandaGuru() {
@@ -56,24 +56,23 @@ export default async function BerandaGuru() {
 
   return (
     <>
-      <p className="text-xs text-slate-500">📅 {tgl}</p>
+      <p className="text-xs text-slate-500">{tgl}</p>
       <h1 className="text-3xl font-extrabold">Halo, {user.nama}!</h1>
       <p className="text-sm text-slate-500">
         Kelola soal dan pantau perkembangan belajar siswa.
       </p>
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <Stat label="Total Soal" value={totalSoal} unit="Soal" icon="📝" />
-        <Stat label="Jumlah Siswa" value={totalSiswa} unit="Siswa" icon="👥" />
-        <Stat label="Rata-rata Nilai" value={rata} unit="Poin" icon="📊" />
+        <Stat label="Total Soal" value={totalSoal} unit="Soal" />
+        <Stat label="Jumlah Siswa" value={totalSiswa} unit="Siswa" />
+        <Stat label="Rata-rata Nilai" value={rata} unit="Poin" />
       </div>
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
-        {aksi.map(([href, ikon, teks]) => (
+        {aksi.map(([href, teks]) => (
           <Link
             key={href}
             href={href}
-            className={`${card} flex items-center gap-3 p-4 font-bold hover:ring-2 hover:ring-blue-300`}
+            className={`${card} p-4 font-bold hover:ring-2 hover:ring-blue-300`}
           >
-            <span className="text-2xl">{ikon}</span>
             {teks}
           </Link>
         ))}

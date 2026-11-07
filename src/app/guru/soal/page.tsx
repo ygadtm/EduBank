@@ -70,7 +70,6 @@ export default async function KelolaSoal({
   return (
     <>
       <PageHead
-        icon="📝"
         title="Kelola Soal"
         sub="Buat, ubah, dan terbitkan soal latihan untuk siswa."
       >

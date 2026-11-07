@@ -78,19 +78,19 @@ export default async function HasilLatihan({
         <p className="text-sm font-semibold" style={{ color: meta.color }}>
           {meta.icon} {latihan.mapel.nama}
         </p>
-        <div className="my-3 text-5xl">
+        <div className="my-3 text-5xl" aria-label={`${b} dari 3 bintang`}>
           {"⭐".repeat(b)}
           {"☆".repeat(3 - b)}
         </div>
-        <h1 className="text-2xl font-extrabold">{pesan[b]}</h1>
-        <p className="mt-1 text-slate-500">
+        <h1 className="text-[22px] font-bold leading-[30px] text-ink">{pesan[b]}</h1>
+        <p className="mt-1 text-muted">
           Kamu menjawab {ok} dari {total} soal dengan benar.
         </p>
         <div className="mt-6 grid grid-cols-3 gap-3">
           {ringkas.map(([l, v]) => (
-            <div key={l} className="rounded-2xl bg-slate-50 p-4">
-              <p className="text-xs font-semibold text-slate-500">{l}</p>
-              <p className="mt-1 text-2xl font-extrabold">{v}</p>
+            <div key={l} className="rounded-[10px] border border-line bg-paper p-4">
+              <p className="text-xs font-semibold text-muted">{l}</p>
+              <p className="mt-1 text-2xl font-bold text-ink">{v}</p>
             </div>
           ))}
         </div>
@@ -98,21 +98,21 @@ export default async function HasilLatihan({
           {latihan.paket && (
             <Link
               href={`/siswa/kerjakan-soal?paket=${latihan.paket.id}`}
-              className="rounded-xl px-6 py-3 text-sm font-bold text-white"
+              className="min-h-11 rounded px-6 py-3 text-sm font-semibold text-accent-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus"
               style={{ background: meta.color }}
             >
-              Coba Lagi
+              Kerjakan Lagi
             </Link>
           )}
           <Link
             href="/siswa/bank-soal"
-            className="rounded-xl bg-blue-50 px-6 py-3 text-sm font-bold text-blue-700"
+            className="min-h-11 rounded border border-line bg-surface px-6 py-3 text-sm font-semibold text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus"
           >
             Pilih Mapel Lain
           </Link>
         </div>
       </section>
-      <h2 className="mx-auto mt-8 max-w-2xl text-lg font-bold">
+      <h2 className="mx-auto mt-8 max-w-2xl text-lg font-bold text-ink">
         Review Jawaban
       </h2>
       <div className="mx-auto mt-3 max-w-2xl space-y-3">
@@ -120,21 +120,22 @@ export default async function HasilLatihan({
           const benar = j.soal.pilihan.find((p) => p.benar);
           return (
             <div key={j.id} className={`${card} p-5`}>
-              <p className="font-bold">
+              <p className="font-bold text-ink">
                 {j.benar ? "✅" : "❌"} {k + 1}. {j.soal.teks}
               </p>
               <p
-                className={`mt-2 text-sm ${j.benar ? "text-emerald-700" : "text-red-600"}`}
+                className={`mt-2 text-sm ${j.benar ? "text-success" : "text-danger"}`}
               >
                 Jawabanmu: {j.pilihan?.teks ?? "Belum dijawab"}
               </p>
               {!j.benar && (
-                <p className="text-sm text-emerald-700">
+                <p className="text-sm text-success">
                   Jawaban benar: {benar?.teks ?? "-"}
                 </p>
               )}
-              <p className="mt-2 rounded-xl bg-slate-50 p-3 text-sm text-slate-600">
-                💡 {j.soal.pembahasan ?? "Tidak ada pembahasan."}
+              <p className="mt-2 rounded border border-line bg-paper p-3 text-sm text-muted">
+                <span className="font-semibold text-ink">Pembahasan:</span>{" "}
+                {j.soal.pembahasan ?? "Tidak ada pembahasan."}
               </p>
             </div>
           );

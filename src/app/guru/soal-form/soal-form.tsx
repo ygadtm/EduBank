@@ -51,7 +51,6 @@ export default function SoalForm({
   return (
     <>
       <PageHead
-        icon="📝"
         title={soal ? "Ubah Soal" : "Buat Soal Baru"}
         sub="Isi soal, pilihan jawaban, kunci, dan pembahasan."
       />

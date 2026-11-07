@@ -112,7 +112,6 @@ export default function LatihanForm({
   return (
     <>
       <PageHead
-        icon="📚"
         title={paket ? "Ubah Paket Latihan" : "Buat Paket Latihan"}
         sub="Pilih soal terbit untuk satu mapel dan satu kelas."
       />
@@ -288,7 +287,7 @@ export default function LatihanForm({
                     </span>{" "}
                     <span className="text-sm font-semibold">{item.teks}</span>
                     {item.topik && (
-                      <span className="ml-2 rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-blue-700">
+                      <span className="ml-2 rounded bg-accent/10 px-2 py-1 text-xs font-semibold text-accent">
                         {item.topik}
                       </span>
                     )}

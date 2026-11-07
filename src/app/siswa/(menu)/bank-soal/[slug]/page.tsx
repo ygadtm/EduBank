@@ -71,13 +71,13 @@ export default async function PaketPerMapel({
                 <p className="mt-1 flex-1 text-sm text-slate-500">{p.deskripsi}</p>
               )}
               <div className="mt-4 flex items-center justify-between">
-                <span className="text-xs text-slate-400">⏱ {p.durasiMenit} menit</span>
+                <span className="text-xs text-muted">{p.durasiMenit} menit</span>
                 <Link
                   href={`/siswa/kerjakan-soal?paket=${p.id}`}
-                  className="rounded-xl px-4 py-2 text-sm font-bold text-white"
+                  className="rounded px-4 py-2 text-sm font-semibold text-accent-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus"
                   style={{ background: meta.color }}
                 >
-                  Mulai →
+                  Kerjakan
                 </Link>
               </div>
             </article>

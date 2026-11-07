@@ -56,7 +56,7 @@ export default function LatihanClient({
 
   return (
     <>
-      <PageHead icon="📚" title="Paket Latihan" sub="Kelola paket dan soal latihan." />
+      <PageHead title="Paket Latihan" sub="Kelola paket dan soal latihan." />
       <div className="mt-5 grid gap-5 xl:grid-cols-5 xl:items-start">
         <aside className="space-y-3 xl:col-span-2 xl:sticky xl:top-4 xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto xl:pr-1">
           <button
@@ -170,9 +170,9 @@ export default function LatihanClient({
                     ))}
                   </div>
                   {s.topik && (
-                    <span className="mt-2 inline-block rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-blue-700">
-                      {s.topik}
-                    </span>
+                      <span className="mt-2 inline-block rounded bg-accent/10 px-2 py-1 text-xs font-semibold text-accent">
+                        {s.topik}
+                      </span>
                   )}
                 </div>
               ))}
@@ -310,7 +310,7 @@ function FormSoalPaket({ paketId, soal, onSelesai }: { paketId: string; soal: So
                     <div key={s.id} className="flex items-start justify-between gap-3 rounded-xl border border-slate-100 p-3">
                       <div className="min-w-0">
                         <p className="text-sm font-semibold">{s.teks}</p>
-                        {s.topik && <span className="mt-1 inline-block rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-blue-700">{s.topik}</span>}
+                        {s.topik && <span className="mt-1 inline-block rounded bg-accent/10 px-2 py-1 text-xs font-semibold text-accent">{s.topik}</span>}
                       </div>
                       <button type="button" disabled={busyBank === s.id} onClick={() => pilihDariBank(s.id)} className={`${btn} shrink-0 py-1.5 text-xs disabled:opacity-60`}>
                         {busyBank === s.id ? "..." : "Tambah"}

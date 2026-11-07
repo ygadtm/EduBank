@@ -2,11 +2,11 @@
 import type { ReactNode } from "react";
 
 export const card =
-  "rounded-2xl bg-white shadow-[0_2px_12px_rgba(30,64,175,.08)]";
+  "rounded-[10px] border border-line bg-surface shadow-[0_1px_2px_rgba(27,42,65,.06)]";
 export const inp =
-  "rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-400";
+  "rounded border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-focus/60";
 export const btn =
-  "rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-blue-700";
+  "rounded bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink hover:bg-accent/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus active:bg-accent/95 disabled:cursor-not-allowed disabled:opacity-60";
 
 export function PageHead({
   icon,
@@ -25,13 +25,13 @@ export function PageHead({
     >
       <div className="flex items-center gap-4">
         {icon && (
-          <div className="grid h-12 w-12 place-items-center rounded-xl border border-blue-100 bg-blue-50 text-xl">
+          <div className="grid h-12 w-12 place-items-center rounded-[10px] border border-line bg-paper text-xl text-accent">
             {icon}
           </div>
         )}
         <div>
-          <h1 className="text-2xl font-extrabold">{title}</h1>
-          <p className="text-sm text-slate-500">{sub}</p>
+          <h1 className="text-[22px] font-bold leading-[30px] text-ink">{title}</h1>
+          <p className="text-sm text-muted">{sub}</p>
         </div>
       </div>
       {children}
@@ -52,17 +52,16 @@ export function Stat({
 }) {
   return (
     <div className={`${card} p-5`}>
-      <div className="flex justify-between text-sm font-semibold text-slate-600">
+      <div className="flex justify-between text-sm font-semibold text-muted">
         {label}
         {icon && (
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-blue-50">
+          <span className="grid h-9 w-9 place-items-center rounded border border-line bg-paper text-accent">
             {icon}
           </span>
         )}
       </div>
-      <p className="mt-3 text-3xl font-extrabold">
-        {value}{" "}
-        <span className="text-sm font-medium text-slate-500">{unit}</span>
+      <p className="mt-3 text-[32px] font-bold leading-[38px] text-ink">
+        {value} <span className="text-sm font-medium text-muted">{unit}</span>
       </p>
     </div>
   );
@@ -90,11 +89,11 @@ export function MapelBadge({
 export function StatusBadge({ s }: { s: string }) {
   const warna =
     s === "Terbit"
-      ? "bg-emerald-100 text-emerald-700"
-      : "bg-amber-100 text-amber-700";
+      ? "bg-success/15 text-success"
+      : "bg-highlight/20 text-ink";
 
   return (
-    <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${warna}`}>
+    <span className={`rounded px-2.5 py-1 text-xs font-semibold ${warna}`}>
       {s}
     </span>
   );
@@ -112,7 +111,7 @@ export function Tabel({
     <div className="md:overflow-x-auto">
       <table className="block w-full text-left text-sm md:table">
         <thead className="hidden md:table-header-group">
-          <tr className="border-b border-slate-100 text-xs text-slate-500">
+          <tr className="border-b border-line text-xs text-muted">
             {head.map((h) => (
               <th key={h} className="px-4 py-3 font-semibold">
                 {h}
@@ -124,13 +123,13 @@ export function Tabel({
           {rows.map((r, i) => (
             <tr
               key={i}
-              className="mx-4 mb-3 block rounded-xl border border-slate-100 p-3 md:m-0 md:table-row md:rounded-none md:border-0 md:border-b md:border-slate-50 md:p-0"
+              className="mx-4 mb-3 block rounded-[10px] border border-line p-3 md:m-0 md:table-row md:rounded-none md:border-0 md:border-b md:border-line md:p-0"
             >
               {r.map((c, j) => (
                 <td
                   key={j}
                   data-label={head[j]}
-                  className="flex items-center justify-between gap-3 py-1.5 before:text-xs before:font-semibold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-4 md:py-3 md:before:content-none"
+                  className="flex items-center justify-between gap-3 py-1.5 before:text-xs before:font-semibold before:text-muted before:content-[attr(data-label)] md:table-cell md:px-4 md:py-3 md:before:content-none"
                 >
                   {c}
                 </td>
@@ -146,24 +145,30 @@ export function Tabel({
 export function Segera({ judul }: { judul: string }) {
   return (
     <div className={`${card} p-8 text-center`}>
-      <h1 className="text-xl font-extrabold">{judul}</h1>
-      <p className="mt-2 text-sm text-slate-500">
+      <h1 className="text-[22px] font-bold leading-[30px] text-ink">{judul}</h1>
+      <p className="mt-2 text-sm text-muted">
         Halaman ini ada di versi HTML dan belum dipindahkan ke versi Next.js.
       </p>
     </div>
   );
 }
 
-export function Bar({ v, c = "#2563eb" }: { v: number; c?: string }) {
+export function Bar({
+  v,
+  c = "var(--color-accent)",
+}: {
+  v: number;
+  c?: string;
+}) {
   return (
     <div className="flex items-center gap-2">
-      <div className="h-2 w-24 overflow-hidden rounded-full bg-slate-100">
+      <div className="h-2 w-24 overflow-hidden rounded bg-line">
         <div
-          className="h-full rounded-full"
+          className="h-full rounded"
           style={{ width: `${v}%`, background: c }}
         />
       </div>
-      <b>{v}</b>
+      <b className="text-sm text-ink">{v}</b>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { PageHead, inp, card } from "@/components/ui";
 import { prisma } from "@/lib/db";
-import { ImporSiswaButton, SiswaTable } from "./siswa-client";
+import { SiswaTable, TambahSiswaForm } from "./siswa-client";
 
 export default async function DataSiswa({
   searchParams,
@@ -38,16 +38,10 @@ export default async function DataSiswa({
   return (
     <>
       <PageHead
-        icon="👥"
         title="Data Siswa"
         sub="Kelola daftar siswa. Password awal siswa adalah NIS."
-      >
-        <ImporSiswaButton />
-      </PageHead>
-      <p className="mt-3 text-xs text-slate-500">
-        Format Excel: baris judul berisi kolom <b>nama</b>, <b>nis</b>, dan{" "}
-        <b>kelas</b>.
-      </p>
+      />
+      <TambahSiswaForm />
       <form className={`${card} mt-3 flex flex-wrap gap-3 p-5`}>
         <input
           name="q"

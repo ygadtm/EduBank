@@ -5,10 +5,10 @@ export default async function HalamanGantiPassword() {
   const user = await requireSessionUser();
 
   return (
-    <div className="grid min-h-screen place-items-center bg-[#f4f7fc] p-4">
-      <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-xl">
-        <h1 className="text-2xl font-extrabold">Ganti Password</h1>
-        <p className="mt-1 text-sm text-slate-500">
+    <div className="grid min-h-screen place-items-center bg-paper p-4">
+      <div className="w-full max-w-md rounded-[10px] border border-line bg-surface p-8 shadow-[0_1px_2px_rgba(27,42,65,.06)]">
+        <h1 className="text-[22px] font-bold leading-[30px] text-ink">Ganti Password</h1>
+        <p className="mt-2 text-sm text-muted">
           Hai {user.nama}, ganti password awal sebelum melanjutkan.
         </p>
         <div className="mt-6">

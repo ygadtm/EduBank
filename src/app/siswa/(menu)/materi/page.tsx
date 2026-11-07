@@ -13,8 +13,7 @@ export default async function Materi() {
 
   return (
     <>
-      <p className="mb-3 text-xs text-slate-500">
-        📅{" "}
+      <p className="mb-3 text-xs text-muted">
         {new Date().toLocaleDateString("id-ID", {
           weekday: "long",
           day: "numeric",
@@ -23,28 +22,23 @@ export default async function Materi() {
         })}
       </p>
       <PageHead
-        icon="❓"
+        icon="▶"
         title="Materi Pembelajaran"
-        sub="Pilih materi pelajaran dan pelajari rangkumannya bersama gurumu."
+        sub="Pilih materi pelajaran dan tonton video pembelajarannya."
       />
       {rekomendasi && (
-        <section className="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-linear-to-r from-blue-700 to-emerald-700 p-5 text-white">
-          <div className="flex gap-4">
-            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-white/20 text-xl">
-              💡
-            </span>
-            <div className="max-w-xl">
-              <p className="text-xs font-semibold tracking-wide text-blue-100">
-                MATERI REKOMENDASI PEKAN INI
-              </p>
-              <b>{rekomendasi.judul}</b>
-              <p className="mt-1 text-sm text-blue-100">
-                {rekomendasi.ringkasan}
-              </p>
-            </div>
+        <section className={`${card} mt-5 flex flex-wrap items-center justify-between gap-4 border-l-4 border-l-accent p-5`}>
+          <div className="max-w-xl">
+            <p className="text-xs font-semibold text-muted">
+              Materi rekomendasi
+            </p>
+            <b className="text-ink">{rekomendasi.judul}</b>
+            <p className="mt-1 text-sm text-muted">
+              Tonton video pembelajaran untuk materi ini.
+            </p>
           </div>
-          <span className="rounded-xl bg-white/20 px-4 py-2.5 text-sm font-semibold">
-            Materi Kelas {rekomendasi.kelas}
+          <span className="rounded bg-paper px-4 py-2.5 text-sm font-semibold text-ink">
+            Kelas {rekomendasi.kelas}
           </span>
         </section>
       )}
@@ -68,35 +62,31 @@ export default async function Materi() {
                 {meta.icon}
               </div>
               <p
-                className="mt-4 text-xs font-bold uppercase tracking-wide"
+                className="mt-4 text-xs font-semibold"
                 style={{ color: meta.color }}
               >
                 {meta.nama}
               </p>
-              <h2 className="mt-1 font-bold">{m.judul}</h2>
-              <p className="mt-1 flex-1 text-sm text-slate-500">
-                {m.ringkasan}
-              </p>
-              <div className="mt-4 flex gap-2">
+              <h2 className="mt-1 flex-1 font-bold text-ink">{m.judul}</h2>
+              <div className="mt-4">
                 {m.videoUrl ? (
                   <a
                     href={m.videoUrl}
-                    className="rounded-xl px-4 py-3 text-center text-sm font-bold text-white"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-block rounded px-4 py-3 text-center text-sm font-semibold text-accent-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus"
                     style={{ background: meta.color }}
                   >
-                    ▷ Tonton Video
+                    Tonton Video
                   </a>
                 ) : (
                   <span
                     aria-disabled="true"
-                    className="cursor-not-allowed rounded-xl bg-slate-200 px-4 py-3 text-sm font-semibold text-slate-500"
+                    className="inline-block cursor-not-allowed rounded border border-line bg-paper px-4 py-3 text-sm font-semibold text-muted"
                   >
                     Video belum tersedia
                   </span>
                 )}
-                <span className="rounded-xl bg-blue-50 px-4 py-3 text-sm font-semibold text-slate-700">
-                  Rangkuman
-                </span>
               </div>
             </article>
           );

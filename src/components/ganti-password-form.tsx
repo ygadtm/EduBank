@@ -2,10 +2,10 @@
 
 import { useActionState } from "react";
 import { gantiPassword } from "@/lib/actions/auth";
-import { inp } from "@/components/ui";
+import { btn, inp } from "@/components/ui";
 
-const lbl = "block space-y-1.5 text-xs font-bold uppercase text-slate-700";
-const fld = `${inp} w-full normal-case`;
+const lbl = "block space-y-1.5 text-sm font-semibold text-ink";
+const fld = `${inp} w-full`;
 
 export default function GantiPasswordForm() {
   const [state, formAction, pending] = useActionState(gantiPassword, {
@@ -47,14 +47,11 @@ export default function GantiPasswordForm() {
         />
       </label>
       {state.error && (
-        <p className="rounded-xl bg-red-50 px-3 py-2 text-sm font-semibold text-red-600">
+        <p className="rounded border border-danger/30 bg-danger/10 px-3 py-2 text-sm font-semibold text-danger">
           {state.error}
         </p>
       )}
-      <button
-        disabled={pending}
-        className="w-full rounded-xl bg-blue-700 py-3 text-sm font-bold text-white hover:bg-blue-800 disabled:opacity-60"
-      >
+      <button disabled={pending} className={`${btn} w-full py-3`}>
         {pending ? "Menyimpan..." : "Simpan Password Baru"}
       </button>
     </form>

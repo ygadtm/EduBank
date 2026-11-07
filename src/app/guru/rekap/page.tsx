@@ -104,7 +104,6 @@ export default async function Rekap({
   return (
     <>
       <PageHead
-        icon="📊"
         title="Rekap Nilai"
         sub="Pantau hasil latihan setiap siswa."
       >
@@ -128,18 +127,16 @@ export default async function Rekap({
         </form>
       </PageHead>
       <div className="mt-5 grid gap-4 sm:grid-cols-3">
-        <Stat label="Rata-rata Kelas" value={rataKelas} unit="Poin" icon="📊" />
+        <Stat label="Rata-rata Kelas" value={rataKelas} unit="Poin" />
         <Stat
           label="Nilai Tertinggi"
           value={tertinggi?.nilai ?? 0}
           unit={tertinggi?.nama ?? "Belum ada"}
-          icon="🏆"
         />
         <Stat
           label="Perlu Bimbingan"
           value={perluBimbingan}
           unit="Siswa"
-          icon="🤝"
         />
       </div>
       <section className={`${card} mt-5`}>

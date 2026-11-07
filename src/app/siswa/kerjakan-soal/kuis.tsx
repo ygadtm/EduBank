@@ -122,43 +122,43 @@ export default function Kuis({
   function warna(pilihanId: string) {
     if (!feedback) {
       return pilih === pilihanId
-        ? "border-blue-400 bg-blue-50"
-        : "border-slate-200 bg-white hover:border-blue-400";
+        ? "border-accent bg-accent/10"
+        : "border-line bg-surface hover:border-accent/50";
     }
     if (pilihanId === feedback.pilihanBenarId) {
-      return "border-emerald-500 bg-emerald-50 text-emerald-800";
+      return "border-success bg-success/10 text-success";
     }
     if (pilihanId === pilih) {
-      return "border-red-400 bg-red-50 text-red-700";
+      return "border-danger bg-danger/10 text-danger";
     }
-    return "border-slate-200 bg-white";
+    return "border-line bg-surface";
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f7fc]">
+    <div className="min-h-screen bg-paper">
       <div className="mx-auto max-w-2xl p-4 md:py-8">
         <div className="flex items-center justify-between">
           <Link
             href="/siswa/bank-soal"
-            className="text-sm font-semibold text-slate-500"
+            className="min-h-11 rounded px-2 py-2 text-sm font-semibold text-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus"
           >
-            ← Keluar
+            Keluar
           </Link>
-          <b className="rounded-full bg-white px-4 py-1.5 text-sm shadow">
-            ⏱ {w(Math.max(0, Math.floor(sisa / 60)))}:
+          <b className="rounded border border-line bg-surface px-4 py-1.5 text-sm text-ink">
+            Sisa waktu {w(Math.max(0, Math.floor(sisa / 60)))}:
             {w(Math.max(0, sisa % 60))}
           </b>
         </div>
         <div className="mt-4 flex items-center gap-3">
           <span
-            className="grid h-10 w-10 place-items-center rounded-xl text-xl"
+            className="grid h-10 w-10 place-items-center rounded border border-line text-xl"
             style={{ background: mapel.bg }}
           >
             {mapel.icon}
           </span>
           <div>
-            <h1 className="font-extrabold">{mapel.nama}</h1>
-            <p className="text-xs text-slate-500">
+            <h1 className="font-bold text-ink">{mapel.nama}</h1>
+            <p className="text-xs text-muted">
               Soal {i + 1} dari {soal.length}
             </p>
           </div>
@@ -173,26 +173,26 @@ export default function Kuis({
           />
         </div>
         {error && (
-          <p className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-600">
+          <p className="mt-4 rounded border border-danger/30 bg-danger/10 px-4 py-3 text-sm font-semibold text-danger">
             {error}
           </p>
         )}
         {!latihanId && !error && (
-          <p className="mt-4 text-sm font-semibold text-slate-500">
+          <p className="mt-4 text-sm font-semibold text-muted">
             Menyiapkan latihan...
           </p>
         )}
         <div className={`${card} mt-5 p-6`}>
-          <p className="text-lg font-bold leading-relaxed">{q.teks}</p>
+          <p className="text-lg font-bold leading-relaxed text-ink">{q.teks}</p>
           <div className="mt-5 grid gap-3">
             {q.pilihan.map((o, k) => (
               <button
                 key={o.id}
                 onClick={() => pick(o.id)}
                 disabled={!!pilih || !latihanId}
-                className={`rounded-2xl border-2 p-4 text-left font-semibold disabled:cursor-default ${warna(o.id)}`}
+                className={`min-h-11 rounded-[10px] border-2 p-4 text-left font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus disabled:cursor-default ${warna(o.id)}`}
               >
-                <span className="mr-2 text-slate-400">{"ABCD"[k]}.</span>
+                <span className="mr-2 text-muted">{"ABCD"[k]}.</span>
                 {o.teks}
               </button>
             ))}
@@ -200,18 +200,18 @@ export default function Kuis({
           {feedback && (
             <div className="mt-5">
               <p
-                className={`font-bold ${feedback.benar ? "text-emerald-600" : "text-red-500"}`}
+                className={`font-bold ${feedback.benar ? "text-success" : "text-danger"}`}
               >
                 {feedback.benar
                   ? "Benar! 🎉"
                   : "Belum tepat, tidak apa-apa 😊"}
               </p>
-              <p className="mt-1 text-sm text-slate-600">
+              <p className="mt-1 text-sm text-muted">
                 {feedback.pembahasan}
               </p>
               <button
                 onClick={lanjut}
-                className="mt-4 w-full rounded-xl py-3 font-bold text-white"
+                className="mt-4 w-full min-h-11 rounded py-3 font-semibold text-accent-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus"
                 style={{ background: mapel.color }}
               >
                 {i === soal.length - 1 ? "Lihat Hasil" : "Soal Berikutnya"}

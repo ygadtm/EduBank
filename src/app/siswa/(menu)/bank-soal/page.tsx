@@ -25,7 +25,7 @@ export default async function BankSoal() {
   return (
     <>
       <PageHead
-        icon="❓"
+        icon="📚"
         title="Bank Soal & Latihan"
         sub="Pilih mata pelajaran untuk melihat paket latihan."
       />
@@ -37,8 +37,7 @@ export default async function BankSoal() {
             <Link
               key={m.id}
               href={`/siswa/bank-soal/${m.slug}`}
-              className={`${card} flex flex-col p-6 transition-all hover:ring-2`}
-              style={{ ["--tw-ring-color" as string]: meta.color }}
+              className={`${card} flex flex-col p-6 transition-colors hover:border-accent/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus`}
             >
               <div
                 className="grid h-16 w-16 place-items-center rounded-2xl text-3xl"
@@ -46,10 +45,10 @@ export default async function BankSoal() {
               >
                 {meta.icon}
               </div>
-              <h2 className="mt-4 text-lg font-bold">{m.nama}</h2>
-              <p className="mt-1 flex-1 text-sm text-slate-500">{m.deskripsi}</p>
-              <p className="mt-3 text-xs font-semibold" style={{ color: meta.color }}>
-                {jumlah === 0 ? "Belum ada paket" : `${jumlah} paket tersedia →`}
+              <h2 className="mt-4 text-lg font-bold text-ink">{m.nama}</h2>
+              <p className="mt-1 flex-1 text-sm text-muted">{m.deskripsi}</p>
+              <p className="mt-3 text-sm font-semibold" style={{ color: meta.color }}>
+                {jumlah === 0 ? "Belum ada paket" : `${jumlah} paket tersedia`}
               </p>
             </Link>
           );

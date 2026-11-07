@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState, type ChangeEvent } from "react";
-import { imporSiswa, resetPasswordSiswa } from "@/lib/actions/siswa";
-import { Tabel, btn } from "@/components/ui";
+import { useActionState, useEffect, useRef, useState } from "react";
+import { resetPasswordSiswa, tambahSiswa } from "@/lib/actions/siswa";
+import { Tabel, btn, card, inp } from "@/components/ui";
 
 type Siswa = {
   id: string;
@@ -14,71 +14,41 @@ type Siswa = {
   harusGantiPassword: boolean;
 };
 
-function ambil(obj: Record<string, unknown>, key: string) {
-  const kunci = Object.keys(obj).find(
-    (k) => k.trim().toLowerCase() === key,
-  );
-  return kunci ? String(obj[kunci] ?? "").trim() : "";
-}
+export function TambahSiswaForm() {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [state, formAction, pending] = useActionState(tambahSiswa, {});
 
-export function ImporSiswaButton() {
-  const router = useRouter();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [busy, setBusy] = useState(false);
-
-  async function impor(e: ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0];
-    if (!f) return;
-    setBusy(true);
-
-    try {
-      const XLSX = await import("xlsx");
-      const wb = XLSX.read(await f.arrayBuffer(), { type: "array" });
-      const sheet = wb.Sheets[wb.SheetNames[0]];
-      const data = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, {
-        raw: false,
-        defval: "",
-      });
-      const rows = data.map((x) => ({
-        nama: ambil(x, "nama"),
-        nisNip: ambil(x, "nis"),
-        kelas: ambil(x, "kelas"),
-      }));
-
-      const hasil = await imporSiswa(rows);
-      if ("error" in hasil) {
-        alert(hasil.error);
-      } else {
-        const gagal = hasil.gagal?.length
-          ? ` ${hasil.gagal.length} baris gagal: ${hasil.gagal
-              .slice(0, 3)
-              .join(" ")}`
-          : "";
-        alert(
-          `${hasil.dibuat} siswa baru, ${hasil.diperbarui} diperbarui.${gagal}`,
-        );
-        router.refresh();
-      }
-    } catch {
-      alert("File Excel gagal dibaca.");
-    } finally {
-      setBusy(false);
-      if (inputRef.current) inputRef.current.value = "";
-    }
-  }
+  useEffect(() => {
+    if (state.ok) formRef.current?.reset();
+  }, [state.ok]);
 
   return (
-    <label className={`${btn} cursor-pointer ${busy ? "opacity-60" : ""}`}>
-      📥 Impor dari Excel
-      <input
-        ref={inputRef}
-        type="file"
-        accept=".xlsx,.xls"
-        onChange={impor}
-        disabled={busy}
-        className="hidden"
-      />
-    </label>
+    <section className={`${card} mt-3 p-5`}>
+      <h2 className="font-bold">Tambah Siswa</h2>
+      <form ref={formRef} action={formAction} className="mt-3 flex flex-wrap items-end gap-3">
+        <label className="min-w-[200px] flex-1 text-sm">
+          <span className="mb-1 block font-semibold text-slate-700">Nama</span>
+          <input name="nama" required className={`${inp} w-full`} placeholder="Nama siswa" />
+        </label>
+        <label className="w-full text-sm sm:w-44">
+          <span className="mb-1 block font-semibold text-slate-700">NIS</span>
+          <input name="nisNip" required inputMode="numeric" className={`${inp} w-full`} placeholder="NIS" />
+        </label>
+        <label className="w-full text-sm sm:w-36">
+          <span className="mb-1 block font-semibold text-slate-700">Kelas</span>
+          <select name="kelas" required defaultValue="" className={`${inp} w-full`}>
+            <option value="" disabled>Pilih</option>
+            <option value="5">Kelas 5</option>
+            <option value="6">Kelas 6</option>
+          </select>
+        </label>
+        <button disabled={pending} className={`${btn} disabled:opacity-60`}>
+          {pending ? "Menyimpan..." : "Tambah Siswa"}
+        </button>
+      </form>
+      {state.error && <p className="mt-3 text-sm text-rose-600">{state.error}</p>}
+      {state.ok && <p className="mt-3 text-sm text-emerald-600">Siswa berhasil ditambahkan.</p>}
+    </section>
   );
 }
 
