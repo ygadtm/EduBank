@@ -15,8 +15,10 @@ const NAV = {
     ["beranda", "Beranda"],
     ["soal", "Kelola Soal"],
     ["latihan", "Paket Latihan"],
+    ["video", "Video"],
     ["siswa", "Siswa"],
     ["rekap", "Rekap Nilai"],
+    ["pengguna", "Akun Guru"],
   ],
 } as const;
 
@@ -26,17 +28,19 @@ export default function AppShell({
   children,
 }: {
   role: "siswa" | "guru";
-  user: { nama: string; kelas: number | null };
+  user: { nama: string; kelas: number | null; admin?: boolean };
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const path = usePathname();
-  const nav = NAV[role];
+  const nav = NAV[role].filter(
+    (item) => item[0] !== "pengguna" || user.admin,
+  );
   const aktif = (k: string) =>
     path.startsWith(`/${role}/${k}`) ||
     (k === "bank-soal" && path.includes("hasil-latihan")) ||
     (k === "latihan" && path.startsWith(`/${role}/latihan-form`));
-  const label = role === "guru" ? "Guru" : `Kelas ${user.kelas ?? "-"} SD`;
+  const label = role === "guru" ? (user.admin ? "Admin" : "Guru") : `Kelas ${user.kelas ?? "-"} SD`;
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-paper">

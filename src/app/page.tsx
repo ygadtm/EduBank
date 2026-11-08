@@ -11,7 +11,9 @@ export default async function Login() {
       select: { role: true, harusGantiPassword: true, aktif: true },
     });
     if (user?.aktif) {
-      if (user.harusGantiPassword) redirect("/ganti-password");
+      if (user.role === "GURU" && user.harusGantiPassword) {
+        redirect("/ganti-password");
+      }
       redirect(user.role === "GURU" ? "/guru/beranda" : "/siswa/beranda");
     }
   }

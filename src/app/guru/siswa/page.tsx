@@ -1,6 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { PageHead, inp, card } from "@/components/ui";
 import { prisma } from "@/lib/db";
+import { requireGuru } from "@/lib/auth";
 import { SiswaTable, TambahSiswaForm } from "./siswa-client";
 
 export default async function DataSiswa({
@@ -8,6 +9,7 @@ export default async function DataSiswa({
 }: {
   searchParams: Promise<{ q?: string; kelas?: string }>;
 }) {
+  const admin = await requireGuru();
   const params = await searchParams;
   const q = typeof params.q === "string" ? params.q : "";
   const kelas =
@@ -58,7 +60,7 @@ export default async function DataSiswa({
           Cari
         </button>
       </form>
-      <SiswaTable siswa={siswa} />
+      <SiswaTable siswa={siswa} admin={admin.admin} />
     </>
   );
 }

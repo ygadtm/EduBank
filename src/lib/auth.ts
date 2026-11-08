@@ -2,7 +2,6 @@ import { cache } from "react";
 import { redirect } from "next/navigation";
 import { prisma } from "./db";
 import { getSession } from "./session";
-import type { SessionRole } from "./jwt";
 
 const userSelect = {
   id: true,
@@ -11,6 +10,7 @@ const userSelect = {
   role: true,
   kelas: true,
   aktif: true,
+  admin: true,
   harusGantiPassword: true,
 } as const;
 
@@ -28,19 +28,25 @@ export async function requireSessionUser() {
   return user;
 }
 
-export async function requireUser(role?: SessionRole) {
+export async function requireUser(role?: "SISWA" | "GURU") {
   const user = await requireSessionUser();
 
   if (role && user.role !== role) {
     redirect(user.role === "GURU" ? "/guru/beranda" : "/siswa/beranda");
   }
 
-  if (user.harusGantiPassword) redirect("/ganti-password");
+  if (user.role === "GURU" && user.harusGantiPassword) redirect("/ganti-password");
   return user;
 }
 
 export function requireGuru() {
   return requireUser("GURU");
+}
+
+export async function requireAdmin() {
+  const user = await requireGuru();
+  if (!user.admin) redirect("/guru/beranda");
+  return user;
 }
 
 export function requireSiswa() {

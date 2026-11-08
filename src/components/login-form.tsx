@@ -67,16 +67,29 @@ export default function LoginForm() {
         </div>
         <form action={formAction} className="space-y-4 p-8">
           <input type="hidden" name="role" value={guru ? "GURU" : "SISWA"} />
-          <label className={lbl}>
-            {guru ? "NIP Guru" : "NIS"}
-            <input
-              required
-              name="nisNip"
-              placeholder={guru ? "Masukkan NIP Guru" : "Masukkan NIS"}
-              autoComplete="username"
-              className={fld}
-            />
-          </label>
+          {guru ? (
+            <label className={lbl}>
+              NIP Guru
+              <input
+                required
+                name="nisNip"
+                placeholder="Masukkan NIP Guru"
+                autoComplete="username"
+                className={fld}
+              />
+            </label>
+          ) : (
+            <label className={lbl}>
+              Nama Lengkap
+              <input
+                required
+                name="nama"
+                placeholder="Masukkan nama lengkap"
+                autoComplete="username"
+                className={fld}
+              />
+            </label>
+          )}
           <label className={lbl}>
             Kata sandi
             <Sandi placeholder="Masukkan kata sandi" />

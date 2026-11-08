@@ -12,27 +12,54 @@ import {
 
 export type AuthState = { error: string };
 
-const GAGAL = "NIS/NIP atau password salah.";
+const GAGAL = "Nama/NIS atau kata sandi salah.";
 
 export async function login(
   _prev: AuthState,
   formData: FormData,
 ): Promise<AuthState> {
-  const nisNip = String(formData.get("nisNip") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const role = formData.get("role") === "GURU" ? "GURU" : "SISWA";
 
-  if (!nisNip || !password) {
-    return { error: "NIS/NIP dan password wajib diisi." };
+  const pilih = {
+    id: true,
+    password: true,
+    aktif: true,
+    role: true,
+  } as const;
+
+  let user;
+  if (role === "GURU") {
+    const nip = String(formData.get("nisNip") ?? "").trim();
+    if (!nip || !password) {
+      return { error: "NIP dan kata sandi wajib diisi." };
+    }
+    const guru = await prisma.user.findUnique({
+      where: { nisNip: nip },
+      select: pilih,
+    });
+    user = guru && guru.aktif && (await verifyPassword(password, guru.password))
+      ? guru
+      : null;
+  } else {
+    const nama = String(formData.get("nama") ?? "").trim();
+    if (!nama || !password) {
+      return { error: "Nama dan kata sandi wajib diisi." };
+    }
+    const kandidat = await prisma.user.findMany({
+      where: { nama: { equals: nama, mode: "insensitive" }, role: "SISWA" },
+      select: pilih,
+    });
+    if (kandidat.length > 1) {
+      return { error: "Nama siswa duplikat, pilih identitas unik." };
+    }
+    const siswa = kandidat[0];
+    user = siswa && siswa.aktif && (await verifyPassword(password, siswa.password))
+      ? siswa
+      : null;
   }
 
-  const user = await prisma.user.findUnique({ where: { nisNip } });
-  if (!user || !user.aktif || user.role !== role) {
-    return { error: GAGAL };
-  }
-
-  const cocok = await verifyPassword(password, user.password);
-  if (!cocok) return { error: GAGAL };
+  if (!user) return { error: GAGAL };
 
   await prisma.user.update({
     where: { id: user.id },
@@ -40,7 +67,6 @@ export async function login(
   });
   await setSessionCookie({ id: user.id, role: user.role });
 
-  if (user.harusGantiPassword) redirect("/ganti-password");
   redirect(user.role === "GURU" ? "/guru/beranda" : "/siswa/beranda");
 }
 

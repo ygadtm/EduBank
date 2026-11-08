@@ -8,7 +8,7 @@ export default async function Layout({
 }) {
   const user = await requireGuru();
   return (
-    <AppShell role="guru" user={{ nama: user.nama, kelas: user.kelas }}>
+    <AppShell role="guru" user={{ nama: user.nama, kelas: user.kelas, admin: user.admin }}>
       {children}
     </AppShell>
   );

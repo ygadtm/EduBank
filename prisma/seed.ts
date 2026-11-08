@@ -129,13 +129,14 @@ async function main() {
         role: Role.SISWA,
         kelas: s.kelas,
         aktif: true,
-        harusGantiPassword: true,
+        harusGantiPassword: false,
       },
       update: {
         nama: s.nama,
         role: Role.SISWA,
         kelas: s.kelas,
         aktif: true,
+        harusGantiPassword: false,
       },
     });
   }
@@ -157,12 +158,14 @@ async function main() {
       password: await hash(guruPassword),
       role: Role.GURU,
       aktif: true,
+      admin: true,
       harusGantiPassword: true,
     },
     update: {
       nama: guruNama,
       role: Role.GURU,
       aktif: true,
+      admin: true,
     },
   });
 

@@ -2,11 +2,15 @@
 
 # AKUN DEMO
 ## Siswa:
-  ### NIS: 2025001
+  ### Nama: Isnaini Febriana (login pakai nama)
+  ### Password: 2025001 (NIS)
+
+## Guru (Admin):
+  ### NIP: 124140081
   ### Password: 12345678
 
 ## Guru:
-  ### NIP: 124140081
+  ### NIP: 124140105
   ### Password: 12345678
 
 
@@ -59,9 +63,10 @@ Buka http://localhost:3001.
 
 ## Akun awal
 
-- Guru: login dengan tab Guru, memakai `GURU_INIT_NIP` dan `GURU_INIT_PASSWORD`.
-- Siswa contoh: NIS `2025001` sampai `2025006`. Password awal sama dengan NIS.
-- Semua akun dipaksa mengganti password saat login pertama.
+- Guru: login dengan tab Guru, memakai `GURU_INIT_NIP` dan `GURU_INIT_PASSWORD`. Akun guru pertama berperan admin tunggal.
+- Siswa contoh: nama + NIS, NIS `2025001` sampai `2025006`. Password siswa adalah NIS-nya dan tidak wajib diganti.
+- Hanya guru yang wajib mengganti password saat login pertama.
+- Admin mengelola akun di `/guru/siswa` (hapus/reset siswa) dan `/guru/pengguna` (tambah/hapus/reset guru). Password reset guru diset ke NIP-nya dan wajib diganti saat login berikutnya.
 
 Password tidak pernah disimpan sebagai teks biasa. Hash memakai `bcryptjs`.
 
@@ -92,7 +97,7 @@ src/lib/auth.ts             proteksi role dan status ganti password
 src/lib/actions/            Server Action untuk login, soal, siswa, latihan
 src/middleware.ts           proteksi route berdasarkan sesi
 src/app/page.tsx            login NIS/NIP
-src/app/ganti-password/     ganti password wajib
+src/app/ganti-password/     ganti password wajib (guru)
 src/app/guru/               beranda, soal, soal-form, siswa, rekap, latihan, latihan-form
 src/app/siswa/(menu)/       beranda, bank-soal, materi, hasil-latihan
 src/app/siswa/kerjakan-soal kuis layar penuh
@@ -105,7 +110,7 @@ vercel.json                 region fungsi Vercel: sin1 (Singapura)
 - Tulisan memakai Server Action dengan validasi sesi dan role.
 - Siswa hanya dapat membaca latihan miliknya sendiri.
 - Jawaban dinilai di server dari kunci jawaban di database, bukan dari client.
-- Materi pembelajaran masih statis di `src/lib/materi.ts`.
+- Video pembelajaran dikelola guru lewat `/guru/video`, dilihat siswa lewat `/siswa/materi`.
 - Warna dan ikon mapel tetap di `src/lib/mapel.ts`, bukan di database.
 
 ## Produksi
@@ -154,5 +159,5 @@ Skrip menolak berjalan bila database tujuan sudah berisi data. Skrip menyalin Us
 ## Keamanan
 
 - `.env` tidak masuk git. Hanya `.env.example` yang boleh di-commit.
-- Password awal siswa adalah NIS. Semua akun wajib mengganti password saat login pertama.
+- Password awal siswa adalah NIS; siswa tidak wajib mengganti password. Password guru ditetapkan admin saat membuat akun.
 - Jangan gunakan password NIS untuk produksi jangka panjang tanpa pengawasan guru.

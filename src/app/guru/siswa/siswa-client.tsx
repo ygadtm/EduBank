@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useRef, useState } from "react";
-import { resetPasswordSiswa, tambahSiswa } from "@/lib/actions/siswa";
+import { hapusSiswa, resetPasswordSiswa, tambahSiswa } from "@/lib/actions/siswa";
 import { Tabel, btn, card, inp } from "@/components/ui";
 
 type Siswa = {
@@ -52,7 +52,13 @@ export function TambahSiswaForm() {
   );
 }
 
-export function SiswaTable({ siswa }: { siswa: Siswa[] }) {
+export function SiswaTable({
+  siswa,
+  admin,
+}: {
+  siswa: Siswa[];
+  admin: boolean;
+}) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
 
@@ -60,6 +66,15 @@ export function SiswaTable({ siswa }: { siswa: Siswa[] }) {
     if (!confirm(`Reset password ${nama} ke NIS ${nis}?`)) return;
     setBusy(true);
     const hasil = await resetPasswordSiswa(id);
+    setBusy(false);
+    if ("error" in hasil) alert(hasil.error);
+    else router.refresh();
+  }
+
+  async function hapus(id: string, nama: string) {
+    if (!confirm(`Hapus siswa ${nama}? Semua nilai terkait ikut terhapus.`)) return;
+    setBusy(true);
+    const hasil = await hapusSiswa(id);
     setBusy(false);
     if ("error" in hasil) alert(hasil.error);
     else router.refresh();
@@ -85,14 +100,28 @@ export function SiswaTable({ siswa }: { siswa: Siswa[] }) {
           ? "Wajib ganti password"
           : "Aktif"}
     </span>,
-    <button
-      key="a"
-      disabled={busy}
-      onClick={() => reset(s.id, s.nama, s.nisNip)}
-      className="font-bold text-blue-700 disabled:opacity-50"
-    >
-      Reset password
-    </button>,
+    admin ? (
+      <span key="a">
+        <button
+          disabled={busy}
+          onClick={() => reset(s.id, s.nama, s.nisNip)}
+          className="font-bold text-blue-700 disabled:opacity-50"
+        >
+          Reset
+        </button>
+        <button
+          disabled={busy}
+          onClick={() => hapus(s.id, s.nama)}
+          className="ml-2 font-bold text-red-500 disabled:opacity-50"
+        >
+          Hapus
+        </button>
+      </span>
+    ) : (
+      <span key="a" className="text-xs text-slate-400">
+        Kelola via admin
+      </span>
+    ),
   ]);
 
   return (

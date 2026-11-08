@@ -31,6 +31,7 @@ model User {
   role               Role      @default(SISWA)
   kelas              Int?
   aktif              Boolean   @default(true)
+  admin              Boolean   @default(false)
   harusGantiPassword Boolean   @default(true)
   lastLoginAt        DateTime?
   createdAt          DateTime  @default(now())
@@ -49,6 +50,21 @@ model Mapel {
   soal         Soal[]
   latihan      Latihan[]
   paketLatihan PaketLatihan[]
+  video        Video[]
+}
+
+model Video {
+  id        String   @id @default(cuid())
+  mapelId   String
+  mapel     Mapel    @relation(fields: [mapelId], references: [id], onDelete: Restrict)
+  kelas     Int
+  judul     String
+  ringkasan String?
+  videoUrl  String
+  urutan    Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([mapelId, kelas])
 }
 
 model Soal {
