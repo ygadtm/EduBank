@@ -56,9 +56,9 @@ export default async function BerandaGuru() {
 
   return (
     <>
-      <p className="text-xs text-slate-500">{tgl}</p>
+      <p className="text-xs text-muted">{tgl}</p>
       <h1 className="text-3xl font-extrabold">Halo, {user.nama}!</h1>
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-muted">
         Kelola soal dan pantau perkembangan belajar siswa.
       </p>
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
@@ -71,9 +71,10 @@ export default async function BerandaGuru() {
           <Link
             key={href}
             href={href}
-            className={`${card} p-4 font-bold hover:ring-2 hover:ring-blue-300`}
+            className={`${card} flex items-center justify-between p-4 font-bold hover:bg-accent/5 hover:ring-2 hover:ring-accent/30`}
           >
             {teks}
+            <span className="text-accent">→</span>
           </Link>
         ))}
       </div>
@@ -81,7 +82,7 @@ export default async function BerandaGuru() {
         <section className={`${card} xl:col-span-2`}>
           <div className="flex items-center justify-between p-5">
             <h2 className="font-bold">Soal Terbaru</h2>
-            <Link href="/guru/soal" className="text-sm font-bold text-blue-700">
+            <Link href="/guru/soal" className="text-sm font-bold text-accent">
               Lihat Semua →
             </Link>
           </div>

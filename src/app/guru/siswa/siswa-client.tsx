@@ -2,7 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useRef, useState } from "react";
-import { hapusSiswa, resetPasswordSiswa, tambahSiswa } from "@/lib/actions/siswa";
+import {
+  hapusSiswa,
+  resetPasswordSiswa,
+  tambahSiswa,
+} from "@/lib/actions/siswa";
 import { Tabel, btn, card, inp } from "@/components/ui";
 
 type Siswa = {
@@ -25,19 +29,41 @@ export function TambahSiswaForm() {
   return (
     <section className={`${card} mt-3 p-5`}>
       <h2 className="font-bold">Tambah Siswa</h2>
-      <form ref={formRef} action={formAction} className="mt-3 flex flex-wrap items-end gap-3">
+      <form
+        ref={formRef}
+        action={formAction}
+        className="mt-3 flex flex-wrap items-end gap-3"
+      >
         <label className="min-w-[200px] flex-1 text-sm">
           <span className="mb-1 block font-semibold text-slate-700">Nama</span>
-          <input name="nama" required className={`${inp} w-full`} placeholder="Nama siswa" />
+          <input
+            name="nama"
+            required
+            className={`${inp} w-full`}
+            placeholder="Nama siswa"
+          />
         </label>
         <label className="w-full text-sm sm:w-44">
           <span className="mb-1 block font-semibold text-slate-700">NIS</span>
-          <input name="nisNip" required inputMode="numeric" className={`${inp} w-full`} placeholder="NIS" />
+          <input
+            name="nisNip"
+            required
+            inputMode="numeric"
+            className={`${inp} w-full`}
+            placeholder="NIS"
+          />
         </label>
         <label className="w-full text-sm sm:w-36">
           <span className="mb-1 block font-semibold text-slate-700">Kelas</span>
-          <select name="kelas" required defaultValue="" className={`${inp} w-full`}>
-            <option value="" disabled>Pilih</option>
+          <select
+            name="kelas"
+            required
+            defaultValue=""
+            className={`${inp} w-full`}
+          >
+            <option value="" disabled>
+              Pilih
+            </option>
             <option value="5">Kelas 5</option>
             <option value="6">Kelas 6</option>
           </select>
@@ -46,8 +72,14 @@ export function TambahSiswaForm() {
           {pending ? "Menyimpan..." : "Tambah Siswa"}
         </button>
       </form>
-      {state.error && <p className="mt-3 text-sm text-rose-600">{state.error}</p>}
-      {state.ok && <p className="mt-3 text-sm text-emerald-600">Siswa berhasil ditambahkan.</p>}
+      {state.error && (
+        <p className="mt-3 text-sm text-rose-600">{state.error}</p>
+      )}
+      {state.ok && (
+        <p className="mt-3 text-sm text-emerald-600">
+          Siswa berhasil ditambahkan.
+        </p>
+      )}
     </section>
   );
 }
@@ -72,7 +104,8 @@ export function SiswaTable({
   }
 
   async function hapus(id: string, nama: string) {
-    if (!confirm(`Hapus siswa ${nama}? Semua nilai terkait ikut terhapus.`)) return;
+    if (!confirm(`Hapus siswa ${nama}? Semua nilai terkait ikut terhapus.`))
+      return;
     setBusy(true);
     const hasil = await hapusSiswa(id);
     setBusy(false);
@@ -107,7 +140,7 @@ export function SiswaTable({
           onClick={() => reset(s.id, s.nama, s.nisNip)}
           className="font-bold text-blue-700 disabled:opacity-50"
         >
-          Reset
+          Reset Password
         </button>
         <button
           disabled={busy}

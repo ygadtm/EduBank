@@ -2,7 +2,10 @@ import { Bar, PageHead, Stat, Tabel, card, inp } from "@/components/ui";
 import { prisma } from "@/lib/db";
 import { getMapelRingkas } from "@/lib/cache";
 
-const bintang = (v: number) => (v >= 85 ? "⭐⭐⭐" : v >= 65 ? "⭐⭐" : "⭐");
+const bintang = (v: number) => {
+  const count = v >= 85 ? 3 : v >= 65 ? 2 : 1;
+  return <span className="tracking-tight text-amber-400">{"★".repeat(count)}</span>;
+};
 const warna = (v: number) =>
   v >= 80 ? "#059669" : v >= 65 ? "#2563eb" : "#d97706";
 

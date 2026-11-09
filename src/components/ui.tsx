@@ -25,7 +25,7 @@ export function PageHead({
     >
       <div className="flex items-center gap-4">
         {icon && (
-          <div className="grid h-12 w-12 place-items-center rounded-[10px] border border-line bg-paper text-xl text-accent">
+          <div className="grid h-12 w-12 place-items-center rounded-[10px] border border-accent/20 bg-accent/10 text-xl text-accent">
             {icon}
           </div>
         )}
@@ -51,7 +51,7 @@ export function Stat({
   icon?: string;
 }) {
   return (
-    <div className={`${card} p-5`}>
+    <div className={`${card} border-l-4 border-l-accent p-5`}>
       <div className="flex justify-between text-sm font-semibold text-muted">
         {label}
         {icon && (
@@ -111,9 +111,9 @@ export function Tabel({
     <div className="md:overflow-x-auto">
       <table className="block w-full text-left text-sm md:table">
         <thead className="hidden md:table-header-group">
-          <tr className="border-b border-line text-xs text-muted">
+            <tr className="border-b border-line text-xs text-muted">
             {head.map((h) => (
-              <th key={h} className="px-4 py-3 font-semibold">
+              <th key={h} className="px-4 py-3 font-semibold uppercase tracking-wide">
                 {h}
               </th>
             ))}
@@ -162,9 +162,9 @@ export function Bar({
 }) {
   return (
     <div className="flex items-center gap-2">
-      <div className="h-2 w-24 overflow-hidden rounded bg-line">
+      <div className="h-2.5 w-24 overflow-hidden rounded-full bg-line">
         <div
-          className="h-full rounded"
+          className="h-full rounded-full"
           style={{ width: `${v}%`, background: c }}
         />
       </div>
