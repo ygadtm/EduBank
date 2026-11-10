@@ -102,7 +102,7 @@ export default async function BerandaGuru() {
                 : 0;
               return (
                 <div key={s.id}>
-                  <p className="mb-1 text-xs font-semibold text-slate-600">
+                  <p className="mb-1 text-xs font-semibold text-muted">
                     {s.nama}
                   </p>
                   <Bar v={nilai} c={meta.color} />

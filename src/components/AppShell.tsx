@@ -45,6 +45,7 @@ export default function AppShell({
   return (
     <div className="min-h-screen overflow-x-hidden bg-paper">
       <aside
+        id="mobile-nav"
         className={`fixed inset-y-0 left-0 z-40 flex w-60 flex-col overflow-y-auto bg-accent p-4 text-accent-ink transition-transform duration-200 md:translate-x-0 ${open ? "" : "-translate-x-full"}`}
       >
         <div className="flex items-center justify-between px-1">
@@ -52,9 +53,19 @@ export default function AppShell({
           <button
             onClick={() => setOpen(false)}
             aria-label="Tutup menu"
-            className="text-sm font-semibold md:hidden"
+            className="grid h-9 w-9 place-items-center rounded text-accent-ink/90 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus md:hidden"
           >
-            Tutup
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+            >
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
           </button>
         </div>
         <div className="mt-4 rounded-2xl bg-white/10 p-4 text-center">
@@ -98,14 +109,26 @@ export default function AppShell({
           <button
             onClick={() => setOpen(true)}
             aria-label="Buka menu"
-            className="min-h-11 rounded px-2 text-sm font-semibold text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus"
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            className="grid h-11 w-11 place-items-center rounded text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus"
           >
-            Menu
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+            >
+              <path d="M4 7h16M4 12h16M4 17h16" />
+            </svg>
           </button>
           <b className="text-accent">EduBank</b>
         </div>
         <div className="flex items-center gap-2 text-right text-xs">
-          <div className="min-w-0">
+          <div className="hidden min-w-0 min-[380px]:block">
             <b className="block text-ink">{user.nama}</b>
             <span className="font-semibold text-accent">{label}</span>
           </div>
@@ -117,18 +140,26 @@ export default function AppShell({
           </div>
         </div>
       </header>
-      <main className="p-4 pb-24 md:ml-60 md:p-8">{children}</main>
-      <nav className="fixed inset-x-0 bottom-0 flex gap-1 border-t border-line bg-surface p-2 md:hidden">
-        {nav.map(([k, n]) => (
+      <main className={`p-4 md:ml-60 md:p-8 ${role === "siswa" ? "pb-24" : ""}`}>
+        {children}
+      </main>
+      {role === "siswa" && (
+        <nav
+          aria-label="Navigasi utama"
+          className="fixed inset-x-0 bottom-0 z-20 flex gap-1 border-t border-line bg-surface px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden"
+        >
+          {nav.map(([k, n]) => (
             <Link
               key={k}
               href={`/${role}/${k}`}
-              className={`flex min-h-11 flex-1 flex-col items-center justify-center rounded px-1 py-2 text-xs font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus ${aktif(k) ? "bg-accent/10 text-accent" : "text-muted"}`}
+              aria-current={aktif(k) ? "page" : undefined}
+              className={`flex min-h-11 flex-1 items-center justify-center rounded px-1 py-2 text-xs font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus ${aktif(k) ? "bg-accent/10 text-accent" : "text-muted"}`}
             >
               {n}
             </Link>
-        ))}
-      </nav>
+          ))}
+        </nav>
+      )}
     </div>
   );
 }
