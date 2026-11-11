@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { getMapelRingkas } from "@/lib/cache";
+import { requireGuru, getGuruScope } from "@/lib/auth";
 import SoalForm from "./soal-form";
 
 export default async function HalamanSoalForm({
@@ -7,8 +7,17 @@ export default async function HalamanSoalForm({
 }: {
   searchParams: Promise<{ id?: string }>;
 }) {
+  const user = await requireGuru();
+  const scope = await getGuruScope(user);
+
   const { id } = await searchParams;
-  const mapels = await getMapelRingkas();
+
+  const mapels = await prisma.mapel.findMany({
+    orderBy: { urutan: "asc" },
+    select: { id: true, slug: true, nama: true },
+    where: scope ? { id: { in: scope.mapelIds } } : undefined,
+  });
+
   const soal = id
     ? await prisma.soal.findUnique({
         where: { id },
@@ -19,6 +28,7 @@ export default async function HalamanSoalForm({
   return (
     <SoalForm
       mapels={mapels}
+      kelasList={scope ? scope.kelasList : [5, 6]}
       soal={
         soal
           ? {

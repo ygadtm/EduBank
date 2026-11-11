@@ -8,11 +8,23 @@ export default async function HalamanPengguna() {
   const admin = await requireAdmin();
   const session = await getSession();
 
-  const gurus = await prisma.user.findMany({
-    where: { role: "GURU" },
-    orderBy: [{ admin: "desc" }, { nama: "asc" }],
-    select: { id: true, nama: true, nisNip: true, admin: true },
-  });
+  const [gurus, mapels] = await Promise.all([
+    prisma.user.findMany({
+      where: { role: "GURU" },
+      orderBy: [{ admin: "desc" }, { nama: "asc" }],
+      select: {
+        id: true,
+        nama: true,
+        nisNip: true,
+        admin: true,
+        guruMapel: { select: { mapelId: true, kelas: true } },
+      },
+    }),
+    prisma.mapel.findMany({
+      orderBy: { urutan: "asc" },
+      select: { id: true, nama: true },
+    }),
+  ]);
 
   return (
     <>
@@ -28,7 +40,9 @@ export default async function HalamanPengguna() {
           nisNip: g.nisNip,
           admin: g.admin,
           idDiri: g.id === session?.userId,
+          guruMapel: g.guruMapel,
         }))}
+        mapels={mapels}
       />
     </>
   );

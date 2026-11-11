@@ -11,7 +11,7 @@ import {
   inp,
 } from "@/components/ui";
 import { prisma } from "@/lib/db";
-import { getMapelRingkas } from "@/lib/cache";
+import { requireGuru, getGuruScope } from "@/lib/auth";
 import { mapelMeta } from "@/lib/mapel";
 
 type Params = {
@@ -26,6 +26,9 @@ export default async function KelolaSoal({
 }: {
   searchParams: Promise<Params>;
 }) {
+  const user = await requireGuru();
+  const scope = await getGuruScope(user);
+
   const params = await searchParams;
   const q = typeof params.q === "string" ? params.q : "";
   const mapel = typeof params.mapel === "string" ? params.mapel : "";
@@ -38,8 +41,17 @@ export default async function KelolaSoal({
   if (mapel) where.mapel = { slug: mapel };
   if (kelas) where.kelas = Number(kelas);
   if (status) where.status = status as StatusSoal;
+  if (scope) {
+    where.mapelId = { in: scope.mapelIds };
+    where.kelas = kelas ? Number(kelas) : { in: scope.kelasList };
+  }
 
-  const mapels = await getMapelRingkas();
+  const mapels = await prisma.mapel.findMany({
+    orderBy: { urutan: "asc" },
+    select: { id: true, slug: true, nama: true },
+    where: scope ? { id: { in: scope.mapelIds } } : undefined,
+  });
+
   const soal = await prisma.soal.findMany({
     where,
     orderBy: { updatedAt: "desc" },
@@ -66,6 +78,10 @@ export default async function KelolaSoal({
       </span>,
     ];
   });
+
+  const kelasOptions = scope
+    ? scope.kelasList.map(String)
+    : ["5", "6"];
 
   return (
     <>
@@ -95,8 +111,9 @@ export default async function KelolaSoal({
           </select>
           <select name="kelas" defaultValue={kelas} className={inp}>
             <option value="">Semua Kelas</option>
-            <option value="5">Kelas 5</option>
-            <option value="6">Kelas 6</option>
+            {kelasOptions.map((k) => (
+              <option key={k} value={k}>Kelas {k}</option>
+            ))}
           </select>
           <select name="status" defaultValue={status} className={inp}>
             <option value="">Semua Status</option>

@@ -5,7 +5,7 @@ import {
   StatusSoal,
 } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { MAPEL, SISWA, SOAL } from "./seed-data";
+import { GURU, MAPEL, SISWA, SOAL } from "./seed-data";
 
 const prisma = new PrismaClient();
 
@@ -65,7 +65,7 @@ async function main() {
             benar: urutan === s.benar,
           })),
         });
-      });
+      }, { timeout: 30000 });
     }
   }
 
@@ -118,7 +118,7 @@ async function main() {
     }
   }
 
-  const passwordSiswa = await Promise.all(SISWA.map((s) => hash(s.nisNip)));
+  const passwordSiswa = await Promise.all(SISWA.map((s) => hash(s.nisNip.slice(-4))));
   for (const [index, s] of SISWA.entries()) {
     await prisma.user.upsert({
       where: { nisNip: s.nisNip },
@@ -141,33 +141,60 @@ async function main() {
     });
   }
 
-  const guruNip = process.env.GURU_INIT_NIP?.trim();
-  const guruNama = process.env.GURU_INIT_NAMA?.trim();
-  const guruPassword = process.env.GURU_INIT_PASSWORD;
-  if (!guruNip || !guruNama || !guruPassword) {
-    throw new Error(
-      "GURU_INIT_NIP, GURU_INIT_NAMA, dan GURU_INIT_PASSWORD wajib diisi.",
-    );
+  const passwordGuru = await Promise.all(GURU.map((g) => hash(g.nisNip)));
+  for (const [index, g] of GURU.entries()) {
+    await prisma.user.upsert({
+      where: { nisNip: g.nisNip },
+      create: {
+        nama: g.nama,
+        nisNip: g.nisNip,
+        password: passwordGuru[index],
+        role: Role.GURU,
+        aktif: true,
+        admin: g.admin,
+        harusGantiPassword: true,
+      },
+      update: {
+        nama: g.nama,
+        role: Role.GURU,
+        aktif: true,
+        admin: g.admin,
+      },
+    });
   }
 
-  await prisma.user.upsert({
-    where: { nisNip: guruNip },
-    create: {
-      nama: guruNama,
-      nisNip: guruNip,
-      password: await hash(guruPassword),
-      role: Role.GURU,
-      aktif: true,
-      admin: true,
-      harusGantiPassword: true,
-    },
-    update: {
-      nama: guruNama,
-      role: Role.GURU,
-      aktif: true,
-      admin: true,
-    },
-  });
+  const mapelKelas = ["bahasa-indonesia", "ipa", "matematika", "ips", "ppkn", "bahasa-inggris"];
+  const fauziahNisNip = "197109011998032003";
+  const deviNisNip = "198409092025212080";
+
+  const [fauziahUser, deviUser] = await Promise.all([
+    prisma.user.findUnique({ where: { nisNip: fauziahNisNip }, select: { id: true } }),
+    prisma.user.findUnique({ where: { nisNip: deviNisNip }, select: { id: true } }),
+  ]);
+
+  if (fauziahUser) {
+    for (const slug of mapelKelas) {
+      const mapel = mapelBySlug.get(slug);
+      if (!mapel) continue;
+      await prisma.guruMapel.upsert({
+        where: { guruId_mapelId_kelas: { guruId: fauziahUser.id, mapelId: mapel.id, kelas: 5 } },
+        create: { guruId: fauziahUser.id, mapelId: mapel.id, kelas: 5 },
+        update: {},
+      });
+    }
+  }
+
+  if (deviUser) {
+    for (const slug of mapelKelas) {
+      const mapel = mapelBySlug.get(slug);
+      if (!mapel) continue;
+      await prisma.guruMapel.upsert({
+        where: { guruId_mapelId_kelas: { guruId: deviUser.id, mapelId: mapel.id, kelas: 6 } },
+        create: { guruId: deviUser.id, mapelId: mapel.id, kelas: 6 },
+        update: {},
+      });
+    }
+  }
 
   const [jumlahMapel, jumlahSoal, jumlahPilihan, jumlahUser] =
     await Promise.all([
@@ -177,11 +204,11 @@ async function main() {
       prisma.user.count(),
     ]);
 
-  if (jumlahMapel < 6) throw new Error(`Jumlah mapel kurang: ${jumlahMapel}`);
+  if (jumlahMapel < 8) throw new Error(`Jumlah mapel kurang: ${jumlahMapel}`);
   if (jumlahSoal < 36) throw new Error(`Jumlah soal kurang: ${jumlahSoal}`);
   if (jumlahPilihan < 144)
     throw new Error(`Jumlah pilihan kurang: ${jumlahPilihan}`);
-  if (jumlahUser < 7) throw new Error(`Jumlah user kurang: ${jumlahUser}`);
+  if (jumlahUser < 17) throw new Error(`Jumlah user kurang: ${jumlahUser}`);
 
   const semuaSoal = await prisma.soal.findMany({
     include: { pilihan: true },

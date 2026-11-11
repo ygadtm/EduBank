@@ -2,16 +2,16 @@
 
 # AKUN DEMO
 ## Siswa:
-  ### Nama: Isnaini Febriana (login pakai nama)
-  ### Password: 2025001 (NIS)
+  ### Nama: Citra Lestari (login pakai nama)
+  ### Password: 1112 (4 digit akhir NISN)
 
 ## Guru (Admin):
-  ### NIP: 124140081
-  ### Password: 12345678
+  ### NIP: 19761025009021001
+  ### Password: 19761025009021001 (ganti saat login pertama)
 
 ## Guru:
-  ### NIP: 124140105
-  ### Password: 12345678
+  ### NIP: 198409092025212080
+  ### Password: 198409092025212080 (ganti saat login pertama)
 
 
 Aplikasi bank soal untuk satu sekolah. Next.js 15, PostgreSQL Supabase, Prisma 6.
@@ -26,9 +26,6 @@ Syarat: Node.js 20 atau lebih baru.
 DATABASE_URL="..."
 DIRECT_URL="..."
 AUTH_SECRET="..."
-GURU_INIT_PASSWORD="..."
-GURU_INIT_NIP="..."
-GURU_INIT_NAMA="..."
 ```
 
 - `DATABASE_URL`: transaction pooler Supabase, port 6543, dengan `pgbouncer=true&connection_limit=1`.
@@ -63,8 +60,8 @@ Buka http://localhost:3001.
 
 ## Akun awal
 
-- Guru: login dengan tab Guru, memakai `GURU_INIT_NIP` dan `GURU_INIT_PASSWORD`. Akun guru pertama berperan admin tunggal.
-- Siswa contoh: nama + NIS, NIS `2025001` sampai `2025006`. Password siswa adalah NIS-nya dan tidak wajib diganti.
+- Guru: login dengan tab Guru, memakai NIP dan password awal = NIP. Data guru diambil dari `prisma/seed-data.ts` (`GURU`); `BADRI, S.Pd` (NIP `19761025009021001`) berperan admin tunggal.
+- Siswa contoh: nama + 4 digit akhir NISN sebagai password. Password tidak wajib diganti.
 - Hanya guru yang wajib mengganti password saat login pertama.
 - Admin mengelola akun di `/guru/siswa` (hapus/reset siswa) dan `/guru/pengguna` (tambah/hapus/reset guru). Password reset guru diset ke NIP-nya dan wajib diganti saat login berikutnya.
 

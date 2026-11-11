@@ -1,9 +1,11 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import Link from "next/link";
 import {
   getBankSoalUntukPaket,
   hapusPaket,
+  hapusPaketDanRiwayat,
   hapusSoalDariPaket,
   simpanMetaPaket,
   simpanSoalKePaket,
@@ -94,7 +96,19 @@ export default function LatihanClient({
                       {p.soal.length} soal · {p.durasiMenit} menit
                     </p>
                   </div>
-                  <TombolHapusPaket id={p.id} terkunci={p._count.latihan > 0} />
+                  <div className="flex shrink-0 items-start gap-2">
+                    <Link
+                      href={`/guru/latihan-form?id=${p.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-xs font-bold text-blue-700"
+                    >
+                      Ubah
+                    </Link>
+                    <TombolHapusPaket
+                      id={p.id}
+                      jumlahLatihan={p._count.latihan}
+                    />
+                  </div>
                 </div>
               </div>
             );
@@ -362,23 +376,28 @@ function FormSoalPaket({ paketId, soal, onSelesai }: { paketId: string; soal: So
   );
 }
 
-function TombolHapusPaket({ id, terkunci }: { id: string; terkunci: boolean }) {
+function TombolHapusPaket({ id, jumlahLatihan }: { id: string; jumlahLatihan: number }) {
   const [busy, setBusy] = useState(false);
-  if (terkunci) return null;
+  const terkunci = jumlahLatihan > 0;
   return (
     <button
       disabled={busy}
       onClick={async (e) => {
         e.stopPropagation();
-        if (!confirm("Hapus paket ini?")) return;
+        if (terkunci) {
+          if (!confirm(`Hapus paket ini beserta ${jumlahLatihan} riwayat latihan siswa?`)) return;
+          if (!confirm("Riwayat latihan siswa akan hilang permanen dan tidak bisa dikembalikan. Lanjutkan?")) return;
+        } else if (!confirm("Hapus paket ini?")) {
+          return;
+        }
         setBusy(true);
-        const hasil = await hapusPaket(id);
+        const hasil = terkunci ? await hapusPaketDanRiwayat(id) : await hapusPaket(id);
         setBusy(false);
         if ("error" in hasil) alert(hasil.error);
       }}
       className="shrink-0 text-xs font-bold text-red-500 disabled:opacity-50"
     >
-      {busy ? "..." : "Hapus"}
+      {busy ? "..." : terkunci ? "Hapus + riwayat" : "Hapus"}
     </button>
   );
 }

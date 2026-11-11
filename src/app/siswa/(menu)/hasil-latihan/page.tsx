@@ -53,6 +53,7 @@ export default async function HasilLatihan({
   );
   const ok = jawaban.filter((j) => j.benar).length;
   const total = jawaban.length;
+  const persen = total > 0 ? Math.round((ok / total) * 100) : 0;
   const b =
     total > 0 && ok === total
       ? 3
@@ -78,9 +79,28 @@ export default async function HasilLatihan({
         <p className="text-sm font-semibold" style={{ color: meta.color }}>
           {meta.icon} {latihan.mapel.nama}
         </p>
-        <div className="my-3 text-5xl" aria-label={`${b} dari 3 bintang`}>
-          {"⭐".repeat(b)}
-          {"☆".repeat(3 - b)}
+        <div className="my-5" aria-label={`${b} dari 3 bintang`}>
+          <p className="text-[40px] font-extrabold leading-none text-ink">
+            {persen}
+            <span className="text-lg font-bold text-muted">%</span>
+          </p>
+          <div className="mt-3 flex justify-center gap-1.5" aria-hidden="true">
+            {[0, 1, 2].map((n) => (
+              <svg
+                key={n}
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+                className={`h-7 w-7 ${
+                  n < b
+                    ? "fill-highlight stroke-highlight"
+                    : "fill-transparent stroke-line"
+                }`}
+              >
+                <path d="M12 3.2l2.7 5.5 6 .9-4.4 4.3 1 6-5.3-2.8-5.3 2.8 1-6-4.4-4.3 6-.9z" />
+              </svg>
+            ))}
+          </div>
         </div>
         <h1 className="text-[22px] font-bold leading-[30px] text-ink">{pesan[b]}</h1>
         <p className="mt-1 text-muted">

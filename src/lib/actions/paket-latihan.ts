@@ -179,6 +179,36 @@ export async function hapusPaket(
   return { ok: true };
 }
 
+export async function hapusPaketDanRiwayat(
+  id: string,
+): Promise<{ ok: true } | { error: string }> {
+  await requireGuru();
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.latihan.deleteMany({ where: { paketId: id } });
+      await tx.paketLatihan.delete({ where: { id } });
+    });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
+      return { error: "Paket latihan tidak ditemukan." };
+    }
+    return { error: "Paket latihan gagal dihapus." };
+  }
+
+  revalidatePath("/guru/latihan");
+  revalidatePath("/guru/rekap");
+  revalidatePath("/guru/beranda");
+  revalidatePath("/siswa/bank-soal");
+  revalidatePath("/siswa/hasil-latihan");
+  revalidatePath("/siswa/beranda");
+  revalidateTag("paket");
+  return { ok: true };
+}
+
 export type MetaPaketState = { error: string };
 
 export async function simpanMetaPaket(

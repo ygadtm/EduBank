@@ -38,6 +38,18 @@ export const MAPEL = [
       "Latihan kosakata harian, benda sekitar, dan percakapan sederhana.",
     urutan: 5,
   },
+  {
+    slug: "agama",
+    nama: "Agama",
+    deskripsi: "Latihan pendidikan agama.",
+    urutan: 6,
+  },
+  {
+    slug: "penjaskes",
+    nama: "Penjaskes",
+    deskripsi: "Latihan pendidikan jasmani dan kesehatan.",
+    urutan: 7,
+  },
 ] as const;
 
 export type SeedSoal = {
@@ -197,10 +209,33 @@ export const SOAL: SeedSoal[] = [
 ];
 
 export const SISWA = [
-  { nama: "Isnaini Febriana", nisNip: "2025001", kelas: 6 },
-  { nama: "Budi Santoso", nisNip: "2025002", kelas: 5 },
-  { nama: "Citra Lestari", nisNip: "2025003", kelas: 6 },
-  { nama: "Dimas Pratama", nisNip: "2025004", kelas: 5 },
-  { nama: "Eka Putri", nisNip: "2025005", kelas: 6 },
-  { nama: "Fajar Ramadhan", nisNip: "2025006", kelas: 5 },
+  { nama: "ANISA SYAFIRA", nisNip: "3162259033", kelas: 5 },
+  { nama: "ARSYIL AQIL FIKRI", nisNip: "0152778929", kelas: 5 },
+  { nama: "AZKA HAFIZ PRASETYO", nisNip: "3167891167", kelas: 5 },
+  { nama: "INDRA DWI ADRIAN PUTRA", nisNip: "3152540598", kelas: 5 },
+  { nama: "IVANDER KHALFANI", nisNip: "3157125515", kelas: 5 },
+  { nama: "NADILA VAYRO", nisNip: "3146870418", kelas: 5 },
+  { nama: "RAFLI WIRATAMA", nisNip: "3152714659", kelas: 5 },
+  { nama: "TRISTAN MUSYAFFA", nisNip: "3156811997", kelas: 5 },
+  { nama: "ADIBA KHEIRUNISA", nisNip: "3145642790", kelas: 6 },
+  { nama: "GADIZHA ISMAIL", nisNip: "3160598388", kelas: 6 },
+  { nama: "KENJO NAJAM MU'ARIF", nisNip: "3159253604", kelas: 6 },
+  { nama: "M. IRWAN OKTA PRATAMA", nisNip: "3122547237", kelas: 6 },
+  { nama: "MUHAMMAD IRFAN ARDIANSY", nisNip: "3125951403", kelas: 6 },
+  { nama: "ROHMAN ALAMSA", nisNip: "3145937338", kelas: 6 },
+  { nama: "SA'AD ROFIF AL-HAFAZHI", nisNip: "3140281019", kelas: 6 },
+  { nama: "CITRA LESTARI", nisNip: "1111111112", kelas: 6 },
+  { nama: "ANNUR AL FAJRI", nisNip: "1111111113", kelas: 6 },
+];
+
+export const GURU = [
+  { nama: "DEWI SARI, S.Pd", nisNip: "197202142003122002", admin: false },
+  { nama: "FAUZIAH RM,S.Pd, SD", nisNip: "197109011998032003", admin: false },
+  { nama: "FITRIYANTI, S.Pd", nisNip: "197410221998032001", admin: false },
+  { nama: "BADRI, S.Pd", nisNip: "19761025009021001", admin: true },
+  { nama: "ARJUNAWATI, S.Pd", nisNip: "196807112008012014", admin: false },
+  { nama: "YURNALISAKTI, S.Pd", nisNip: "198610042010012015", admin: false },
+  { nama: "DEVI ARYANTI, S.Pd", nisNip: "198409092025212080", admin: false },
+  { nama: "ARNA FEBRIA, S.Pd", nisNip: "1111111111", admin: false },
+  { nama: "FERONICA NURMALA SHINTA, S.Pd", nisNip: "2222222222", admin: false },
 ];

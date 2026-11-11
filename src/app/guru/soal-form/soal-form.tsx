@@ -22,16 +22,18 @@ type SoalAwal = {
 
 export default function SoalForm({
   mapels,
+  kelasList,
   soal,
 }: {
   mapels: MapelOption[];
+  kelasList: number[];
   soal: SoalAwal | null;
 }) {
   const [state, formAction, pending] = useActionState(simpanSoal, {
     error: "",
   });
   const [mapelId, setMapelId] = useState(soal?.mapelId ?? mapels[0]?.id ?? "");
-  const [kelas, setKelas] = useState(String(soal?.kelas ?? 6));
+  const [kelas, setKelas] = useState(String(soal?.kelas ?? kelasList[0] ?? 6));
   const [topik, setTopik] = useState(soal?.topik ?? "");
   const [q, setQ] = useState(soal?.teks ?? "");
   const [pembahasan, setPembahasan] = useState(soal?.pembahasan ?? "");
@@ -81,8 +83,9 @@ export default function SoalForm({
                 onChange={(e) => setKelas(e.target.value)}
                 className={`${inp} mt-1 w-full`}
               >
-                <option value="5">Kelas 5</option>
-                <option value="6">Kelas 6</option>
+                {kelasList.map((k) => (
+                  <option key={k} value={k}>Kelas {k}</option>
+                ))}
               </select>
             </label>
             <label className={lab}>

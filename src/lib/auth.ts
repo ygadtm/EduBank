@@ -52,3 +52,18 @@ export async function requireAdmin() {
 export function requireSiswa() {
   return requireUser("SISWA");
 }
+
+export type GuruScope = { mapelIds: string[]; kelasList: number[] } | null;
+
+export async function getGuruScope(user: { id: string; admin: boolean }): Promise<GuruScope> {
+  if (user.admin) return null;
+  const rows = await prisma.guruMapel.findMany({
+    where: { guruId: user.id },
+    select: { mapelId: true, kelas: true },
+  });
+  if (rows.length === 0) return { mapelIds: [], kelasList: [] };
+  return {
+    mapelIds: [...new Set(rows.map((r) => r.mapelId))],
+    kelasList: [...new Set(rows.map((r) => r.kelas))],
+  };
+}

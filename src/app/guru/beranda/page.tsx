@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { requireGuru } from "@/lib/auth";
+import { requireGuru, getGuruScope } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { getStatistikGuru } from "@/lib/cache";
 import { mapelMeta } from "@/lib/mapel";
 import {
   Bar,
@@ -20,6 +19,8 @@ const aksi = [
 
 export default async function BerandaGuru() {
   const user = await requireGuru();
+  const scope = await getGuruScope(user);
+
   const tgl = new Date().toLocaleDateString("id-ID", {
     weekday: "long",
     day: "numeric",
@@ -27,17 +28,43 @@ export default async function BerandaGuru() {
     year: "numeric",
   });
 
-  const { totalSoal, totalSiswa, totalJawaban, totalBenar, mapels, perMapel } =
-    await getStatistikGuru();
+  const soalWhere = scope
+    ? { mapelId: { in: scope.mapelIds }, kelas: { in: scope.kelasList } }
+    : {};
+
+  const [totalSoal, totalSiswa, mapels, jawabanMapel] = await Promise.all([
+    prisma.soal.count({ where: soalWhere }),
+    prisma.user.count({ where: { role: "SISWA", aktif: true } }),
+    prisma.mapel.findMany({
+      where: scope ? { id: { in: scope.mapelIds } } : undefined,
+      orderBy: { urutan: "asc" },
+    }),
+    prisma.jawaban.findMany({
+      where: scope
+        ? { soal: { mapelId: { in: scope.mapelIds }, kelas: { in: scope.kelasList } } }
+        : undefined,
+      select: { benar: true, soal: { select: { mapelId: true } } },
+    }),
+  ]);
+
+  const perMapel = new Map<string, { benar: number; total: number }>();
+  for (const j of jawabanMapel) {
+    const item = perMapel.get(j.soal.mapelId) ?? { benar: 0, total: 0 };
+    item.total += 1;
+    if (j.benar) item.benar += 1;
+    perMapel.set(j.soal.mapelId, item);
+  }
+
+  const totalJawaban = jawabanMapel.length;
+  const totalBenar = jawabanMapel.filter((j) => j.benar).length;
+  const rata = totalJawaban ? Math.round((totalBenar / totalJawaban) * 100) : 0;
+
   const soalTerbaru = await prisma.soal.findMany({
     take: 5,
+    where: soalWhere,
     orderBy: { updatedAt: "desc" },
     include: { mapel: true },
   });
-
-  const rata = totalJawaban
-    ? Math.round((totalBenar / totalJawaban) * 100)
-    : 0;
 
   const rows = soalTerbaru.map((s) => {
     const meta = mapelMeta(s.mapel.slug);
@@ -96,7 +123,7 @@ export default async function BerandaGuru() {
           <div className="mt-4 space-y-3">
             {mapels.map((s) => {
               const meta = mapelMeta(s.slug);
-              const data = perMapel[s.id];
+              const data = perMapel.get(s.id);
               const nilai = data?.total
                 ? Math.round((data.benar / data.total) * 100)
                 : 0;

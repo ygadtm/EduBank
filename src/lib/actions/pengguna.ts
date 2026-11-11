@@ -66,6 +66,25 @@ export async function hapusGuru(id: string) {
   return { ok: true };
 }
 
+export async function setGuruMapel(
+  guruId: string,
+  assignments: { mapelId: string; kelas: number }[],
+) {
+  await requireAdmin();
+
+  await prisma.$transaction([
+    prisma.guruMapel.deleteMany({ where: { guruId } }),
+    ...(assignments.length > 0
+      ? [prisma.guruMapel.createMany({
+          data: assignments.map((a) => ({ guruId, mapelId: a.mapelId, kelas: a.kelas })),
+        })]
+      : []),
+  ]);
+
+  revalidatePath("/guru/pengguna");
+  return { ok: true };
+}
+
 export async function resetPasswordGuru(id: string) {
   const admin = await requireAdmin();
 

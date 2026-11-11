@@ -203,8 +203,8 @@ export default function Kuis({
                 className={`font-bold ${feedback.benar ? "text-success" : "text-danger"}`}
               >
                 {feedback.benar
-                  ? "Benar! 🎉"
-                  : "Belum tepat, tidak apa-apa 😊"}
+                  ? "Benar!"
+                  : "Belum tepat, tidak apa-apa."}
               </p>
               <p className="mt-1 text-sm text-muted">
                 {feedback.pembahasan}

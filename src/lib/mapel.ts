@@ -42,6 +42,18 @@ export const MAPEL_META: Record<string, MapelMeta> = {
     color: "#9333ea",
     bg: "#faf5ff",
   },
+  agama: {
+    nama: "Agama",
+    icon: "🕌",
+    color: "#b45309",
+    bg: "#fef3c7",
+  },
+  penjaskes: {
+    nama: "Penjaskes",
+    icon: "⚽",
+    color: "#16a34a",
+    bg: "#dcfce7",
+  },
 };
 
 const fallback: MapelMeta = {

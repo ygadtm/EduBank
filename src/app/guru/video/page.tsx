@@ -1,10 +1,15 @@
 import Link from "next/link";
 import { PageHead, card } from "@/components/ui";
 import { prisma } from "@/lib/db";
+import { requireGuru, getGuruScope } from "@/lib/auth";
 import { mapelMeta } from "@/lib/mapel";
 
 export default async function VideoGuru() {
+  const user = await requireGuru();
+  const scope = await getGuruScope(user);
+
   const mapels = await prisma.mapel.findMany({
+    where: scope ? { id: { in: scope.mapelIds } } : undefined,
     orderBy: { urutan: "asc" },
     select: { id: true, slug: true, nama: true, deskripsi: true, _count: { select: { video: true } } },
   });

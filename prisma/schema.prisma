@@ -24,19 +24,20 @@ enum StatusPaketLatihan {
 }
 
 model User {
-  id                 String    @id @default(cuid())
+  id                 String      @id @default(cuid())
   nama               String
-  nisNip             String    @unique
+  nisNip             String      @unique
   password           String
-  role               Role      @default(SISWA)
+  role               Role        @default(SISWA)
   kelas              Int?
-  aktif              Boolean   @default(true)
-  admin              Boolean   @default(false)
-  harusGantiPassword Boolean   @default(true)
+  aktif              Boolean     @default(true)
+  admin              Boolean     @default(false)
+  harusGantiPassword Boolean     @default(true)
   lastLoginAt        DateTime?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
   latihan            Latihan[]
+  guruMapel          GuruMapel[]
 
   @@index([role, kelas])
 }
@@ -51,6 +52,18 @@ model Mapel {
   latihan      Latihan[]
   paketLatihan PaketLatihan[]
   video        Video[]
+  guruMapel    GuruMapel[]
+}
+
+model GuruMapel {
+  guruId  String
+  guru    User   @relation(fields: [guruId], references: [id], onDelete: Cascade)
+  mapelId String
+  mapel   Mapel  @relation(fields: [mapelId], references: [id], onDelete: Cascade)
+  kelas   Int
+
+  @@id([guruId, mapelId, kelas])
+  @@index([mapelId, kelas])
 }
 
 model Video {
