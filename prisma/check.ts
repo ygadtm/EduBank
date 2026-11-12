@@ -29,7 +29,7 @@ async function main() {
     prisma.paketLatihan.count(),
     prisma.paketLatihanSoal.count(),
   ]);
-  if (jumlahPaket < 12) throw new Error(`paket=${jumlahPaket}, minimal 12`);
+  if (jumlahPaket < 10) throw new Error(`paket=${jumlahPaket}, minimal 10`);
   if (jumlahAnggota < 36) throw new Error(`anggota paket=${jumlahAnggota}, minimal 36`);
 
   // setiap Latihan harus punya paketId

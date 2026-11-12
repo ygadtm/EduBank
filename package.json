@@ -12,6 +12,7 @@
   "db:seed": "prisma db seed",
   "db:studio": "prisma studio",
    "db:check": "node --env-file=.env --import tsx prisma/check.ts",
+   "db:merge-mapel": "node --env-file=.env --import tsx prisma/merge-mapel.ts",
    "db:format": "prisma format",
    "check:impor": "tsx src/lib/impor-check.ts"
  },

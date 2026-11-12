@@ -34,7 +34,7 @@ async function main() {
     if (!mapel) throw new Error(`Mapel tidak ditemukan: ${s.mapelSlug}`);
 
     for (const kelas of [5, 6]) {
-      const id = soalId(s.mapelSlug, kelas, SOAL.indexOf(s));
+      const id = soalId(s.idSlug ?? s.mapelSlug, kelas, SOAL.indexOf(s));
       await prisma.$transaction(async (tx) => {
         await tx.soal.upsert({
           where: { id },
@@ -163,7 +163,7 @@ async function main() {
     });
   }
 
-  const mapelKelas = ["bahasa-indonesia", "ipa", "matematika", "ips", "ppkn", "bahasa-inggris"];
+  const mapelKelas = ["bahasa-indonesia", "ipa", "matematika", "ppkn", "bahasa-inggris"];
   const fauziahNisNip = "197109011998032003";
   const deviNisNip = "198409092025212080";
 
@@ -204,7 +204,8 @@ async function main() {
       prisma.user.count(),
     ]);
 
-  if (jumlahMapel < 8) throw new Error(`Jumlah mapel kurang: ${jumlahMapel}`);
+  if (jumlahMapel < MAPEL.length)
+    throw new Error(`Jumlah mapel kurang: ${jumlahMapel}`);
   if (jumlahSoal < 36) throw new Error(`Jumlah soal kurang: ${jumlahSoal}`);
   if (jumlahPilihan < 144)
     throw new Error(`Jumlah pilihan kurang: ${jumlahPilihan}`);

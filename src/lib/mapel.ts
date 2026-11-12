@@ -13,7 +13,7 @@ export const MAPEL_META: Record<string, MapelMeta> = {
     bg: "#fef2f2",
   },
   ipa: {
-    nama: "IPA Terpadu / IPAS",
+    nama: "IPAS (Ilmu Pengetahuan Alam dan Sosial)",
     icon: "🌿",
     color: "#059669",
     bg: "#ecfdf5",
@@ -23,12 +23,6 @@ export const MAPEL_META: Record<string, MapelMeta> = {
     icon: "🧮",
     color: "#2563eb",
     bg: "#eff6ff",
-  },
-  ips: {
-    nama: "IPS Terpadu",
-    icon: "🌏",
-    color: "#0284c7",
-    bg: "#f0f9ff",
   },
   ppkn: {
     nama: "Tematik & PPKn",

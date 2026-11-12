@@ -8,7 +8,7 @@ export const MAPEL = [
   },
   {
     slug: "ipa",
-    nama: "IPA Terpadu / IPAS",
+    nama: "IPAS (Ilmu Pengetahuan Alam dan Sosial)",
     deskripsi: "Latihan sains, ekosistem, energi, dan siklus alam.",
     urutan: 1,
   },
@@ -19,41 +19,40 @@ export const MAPEL = [
     urutan: 2,
   },
   {
-    slug: "ips",
-    nama: "IPS Terpadu",
-    deskripsi: "Latihan peta nusantara, sejarah, dan lingkungan sosial.",
-    urutan: 3,
-  },
-  {
     slug: "ppkn",
     nama: "Tematik & PPKn",
     deskripsi:
       "Latihan kebersamaan, aturan bermasyarakat, dan nilai Pancasila.",
-    urutan: 4,
+    urutan: 3,
   },
   {
     slug: "bahasa-inggris",
     nama: "Bahasa Inggris",
     deskripsi:
       "Latihan kosakata harian, benda sekitar, dan percakapan sederhana.",
-    urutan: 5,
+    urutan: 4,
   },
   {
     slug: "agama",
     nama: "Agama",
     deskripsi: "Latihan pendidikan agama.",
-    urutan: 6,
+    urutan: 5,
   },
   {
     slug: "penjaskes",
     nama: "Penjaskes",
     deskripsi: "Latihan pendidikan jasmani dan kesehatan.",
-    urutan: 7,
+    urutan: 6,
   },
 ] as const;
 
 export type SeedSoal = {
   mapelSlug: string;
+  /**
+   * Slug mapel lama. Dipakai hanya untuk membentuk ID soal seed agar tetap
+   * stabil ketika sebuah mapel digabung ke mapel lain.
+   */
+  idSlug?: string;
   teks: string;
   pilihan: string[];
   benar: number;
@@ -126,14 +125,16 @@ export const SOAL: SeedSoal[] = [
     pembahasan: "Volume = 3 × 3 × 3 = 27 cm³.",
   },
   {
-    mapelSlug: "ips",
+    mapelSlug: "ipa",
+    idSlug: "ips",
     teks: "Selat yang memisahkan Pulau Jawa dan Sumatra adalah ...",
     pilihan: ["Selat Bali", "Selat Sunda", "Selat Malaka", "Selat Makassar"],
     benar: 1,
     pembahasan: "Selat Sunda berada di antara Jawa dan Sumatra.",
   },
   {
-    mapelSlug: "ips",
+    mapelSlug: "ipa",
+    idSlug: "ips",
     teks: "Semboyan negara Indonesia adalah ...",
     pilihan: [
       "Bhinneka Tunggal Ika",
@@ -145,7 +146,8 @@ export const SOAL: SeedSoal[] = [
     pembahasan: "Artinya berbeda-beda tetapi tetap satu.",
   },
   {
-    mapelSlug: "ips",
+    mapelSlug: "ipa",
+    idSlug: "ips",
     teks: "Indonesia terletak di antara dua benua, yaitu ...",
     pilihan: [
       "Asia dan Australia",
