@@ -89,9 +89,17 @@ export default async function KelolaSoal({
         title="Kelola Soal"
         sub="Buat, ubah, dan terbitkan soal latihan untuk siswa."
       >
-        <Link href="/guru/soal-form" className={btn}>
-          + Buat Soal
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/guru/impor-soal"
+            className="rounded border border-line bg-surface px-4 py-2.5 text-sm font-semibold text-ink hover:border-accent"
+          >
+            Impor dari File
+          </Link>
+          <Link href="/guru/soal-form" className={btn}>
+            + Buat Soal
+          </Link>
+        </div>
       </PageHead>
       <section className={`${card} mt-5`}>
         <form className="flex flex-wrap gap-3 p-5">

@@ -43,6 +43,14 @@ export function requireGuru() {
   return requireUser("GURU");
 }
 
+export async function requireGuruApi() {
+  const session = await getSession();
+  if (!session || session.role !== "GURU") return null;
+  const user = await loadUser(session.userId);
+  if (!user || !user.aktif || user.role !== "GURU") return null;
+  return user;
+}
+
 export async function requireAdmin() {
   const user = await requireGuru();
   if (!user.admin) redirect("/guru/beranda");

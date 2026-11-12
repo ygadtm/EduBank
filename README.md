@@ -1,4 +1,4 @@
-# EduBank - Web Bank Soal
+﻿# EduBank - Web Bank Soal
 
 # AKUN DEMO
 ## Siswa:
@@ -78,6 +78,44 @@ npm run db:studio      # buka Prisma Studio
 ```
 
 Seed memakai `upsert` dengan ID stabil. Seed ulang tidak membuat duplikat. Seed menghapus dan membuat ulang pilihan jawaban, jadi jangan jalankan seed di database produksi yang sudah berisi jawaban siswa.
+
+## Impor soal otomatis
+
+Guru membuka `/guru/impor-soal`, memilih mapel dan kelas, lalu mengunggah foto, PDF, atau Excel. Hasil ekstraksi tampil sebagai pratinjau yang bisa diedit. Guru memeriksa kunci jawaban, lalu mengimpor. Semua soal tersimpan sebagai Draf kecuali guru memilih Terbitkan.
+
+- Foto JPG/PNG/WEBP dan PDF diekstrak dengan Google Gemini (`gemini-3.5-flash`).
+- Excel XLSX/XLS diparse lokal dengan SheetJS. Kolom: `pertanyaan`, `pilihan_a`, `pilihan_b`, `pilihan_c`, `pilihan_d`, `kunci`, `topik`, `pembahasan`. Kunci boleh A/B/C/D atau 1-4. Template dapat diunduh dari halaman impor.
+- Batas: 10 MB dan 30 soal per impor.
+- File diunggah langsung dari browser ke bucket privat Supabase Storage, diunduh server untuk ekstraksi, lalu dihapus. File tidak disimpan permanen.
+
+Siapkan satu kali:
+
+1. Isi `.env`:
+
+```env
+GEMINI_API_KEY="..."
+GEMINI_MODEL="gemini-3.5-flash"
+SUPABASE_URL="https://<project-ref>.supabase.co"
+SUPABASE_SERVICE_ROLE_KEY="..."
+```
+
+`SUPABASE_SERVICE_ROLE_KEY` hanya boleh di server. Jangan memberi prefix `NEXT_PUBLIC_`.
+
+2. Buat bucket privat di SQL Editor Supabase:
+
+```sql
+insert into storage.buckets (id, name, public)
+values ('impor-soal', 'impor-soal', false)
+on conflict (id) do nothing;
+```
+
+3. Uji parser Excel tanpa database:
+
+```bash
+npm run check:impor
+```
+
+Catatan produksi: route ekstraksi memakai `maxDuration = 60`. Kuota gratis Gemini dibatasi per menit dan per hari. Bila kuota habis, halaman menampilkan pesan untuk mencoba lagi.
 
 ## Struktur
 
