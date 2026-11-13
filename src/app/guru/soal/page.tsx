@@ -58,6 +58,14 @@ export default async function KelolaSoal({
     include: { mapel: true },
   });
 
+  const filterQs = new URLSearchParams();
+  if (q) filterQs.set("q", q);
+  if (mapel) filterQs.set("mapel", mapel);
+  if (kelas) filterQs.set("kelas", kelas);
+  if (status) filterQs.set("status", status);
+  const filter = filterQs.toString();
+  const filterHref = filter ? `&filter=${encodeURIComponent(filter)}` : "";
+
   const rows = soal.map((d) => {
     const meta = mapelMeta(d.mapel.slug);
     return [
@@ -71,7 +79,10 @@ export default async function KelolaSoal({
         year: "numeric",
       }),
       <span key="a" className="font-bold">
-        <Link href={`/guru/soal-form?id=${d.id}`} className="text-blue-700">
+        <Link
+          href={`/guru/soal-form?id=${d.id}${filterHref}`}
+          className="text-blue-700"
+        >
           Ubah
         </Link>
         <HapusSoalButton id={d.id} />

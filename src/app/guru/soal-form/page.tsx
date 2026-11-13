@@ -5,12 +5,12 @@ import SoalForm from "./soal-form";
 export default async function HalamanSoalForm({
   searchParams,
 }: {
-  searchParams: Promise<{ id?: string }>;
+  searchParams: Promise<{ id?: string; filter?: string }>;
 }) {
   const user = await requireGuru();
   const scope = await getGuruScope(user);
 
-  const { id } = await searchParams;
+  const { id, filter } = await searchParams;
 
   const mapels = await prisma.mapel.findMany({
     orderBy: { urutan: "asc" },
@@ -29,6 +29,7 @@ export default async function HalamanSoalForm({
     <SoalForm
       mapels={mapels}
       kelasList={scope ? scope.kelasList : [5, 6]}
+      filter={typeof filter === "string" ? filter : ""}
       soal={
         soal
           ? {

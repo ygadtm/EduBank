@@ -12,6 +12,25 @@ function teks(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
 }
 
+// Bersihkan filter asal agar hanya parameter aman yang ikut di-redirect.
+function filterQuery(raw: FormDataEntryValue | null): string {
+  if (typeof raw !== "string" || !raw) return "";
+  const src = new URLSearchParams(raw);
+  const out = new URLSearchParams();
+
+  const q = src.get("q")?.trim();
+  const mapel = src.get("mapel")?.trim();
+  const kelas = src.get("kelas");
+  const status = src.get("status");
+
+  if (q) out.set("q", q);
+  if (mapel) out.set("mapel", mapel);
+  if (kelas === "5" || kelas === "6") out.set("kelas", kelas);
+  if (status === "TERBIT" || status === "DRAF") out.set("status", status);
+
+  return out.toString();
+}
+
 export async function simpanSoal(
   _prev: SoalFormState,
   formData: FormData,
@@ -109,11 +128,13 @@ export async function simpanSoal(
     });
   }
 
+  const filter = filterQuery(formData.get("filter"));
+
   revalidatePath("/guru/soal");
   revalidatePath("/guru/beranda");
   revalidateTag("soal");
   revalidateTag("mapel");
-  redirect("/guru/soal");
+  redirect(filter ? `/guru/soal?${filter}` : "/guru/soal");
 }
 
 export async function hapusSoal(id: string) {

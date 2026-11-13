@@ -24,10 +24,12 @@ export default function SoalForm({
   mapels,
   kelasList,
   soal,
+  filter = "",
 }: {
   mapels: MapelOption[];
   kelasList: number[];
   soal: SoalAwal | null;
+  filter?: string;
 }) {
   const [state, formAction, pending] = useActionState(simpanSoal, {
     error: "",
@@ -59,6 +61,7 @@ export default function SoalForm({
       <div className="mt-5 grid gap-5 xl:grid-cols-5">
         <form action={formAction} className={`${card} space-y-4 p-6 xl:col-span-3`}>
           {soal && <input type="hidden" name="id" value={soal.id} />}
+          {filter && <input type="hidden" name="filter" value={filter} />}
           <div className="grid gap-3 sm:grid-cols-3">
             <label className={lab}>
               Mapel
@@ -172,7 +175,7 @@ export default function SoalForm({
             </select>
             <div className="flex gap-2">
               <Link
-                href="/guru/soal"
+                href={filter ? `/guru/soal?${filter}` : "/guru/soal"}
                 className="rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-bold text-slate-600"
               >
                 Batal
