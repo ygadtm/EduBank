@@ -100,6 +100,7 @@ export default async function Beranda() {
               <article key={p.id} className={`${card} flex flex-col p-4`}>
                 <div className="flex items-center gap-2">
                   <span
+                    aria-hidden="true"
                     className="grid h-10 w-10 shrink-0 place-items-center rounded border border-line text-xl"
                     style={{ background: meta.bg }}
                   >

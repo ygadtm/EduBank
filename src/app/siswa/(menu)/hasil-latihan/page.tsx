@@ -77,7 +77,7 @@ export default async function HasilLatihan({
     <>
       <section className={`${card} mx-auto max-w-2xl p-8 text-center`}>
         <p className="text-sm font-semibold" style={{ color: meta.color }}>
-          {meta.icon} {latihan.mapel.nama}
+          <span aria-hidden="true">{meta.icon}</span> {latihan.mapel.nama}
         </p>
         <div className="my-5" aria-label={`${b} dari 3 bintang`}>
           <p className="text-[40px] font-extrabold leading-none text-ink">

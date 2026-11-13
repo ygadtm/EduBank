@@ -40,7 +40,7 @@ export default async function VideoPerMapel({
       >
         <Link
           href="/siswa/materi"
-          className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold text-slate-600"
+          className="rounded-xl bg-slate-100 hover:bg-slate-200 px-4 py-2 text-sm font-bold text-slate-600"
         >
           ← Semua Mapel
         </Link>

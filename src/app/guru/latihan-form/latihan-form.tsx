@@ -243,14 +243,14 @@ export default function LatihanForm({
                     return next;
                   })
                 }
-                className="rounded-xl bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700"
+                className="rounded-xl bg-blue-50 hover:bg-blue-100 px-3 py-2 text-xs font-bold text-blue-700"
               >
                 Pilih tampil
               </button>
               <button
                 type="button"
                 onClick={() => setSelected(new Set())}
-                className="rounded-xl bg-slate-100 px-3 py-2 text-xs font-bold text-slate-600"
+                className="rounded-xl bg-slate-100 hover:bg-slate-200 px-3 py-2 text-xs font-bold text-slate-600"
               >
                 Kosongkan
               </button>
@@ -307,7 +307,7 @@ export default function LatihanForm({
           <div className="flex flex-wrap justify-end gap-2">
             <Link
               href="/guru/latihan"
-              className="rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-bold text-slate-600"
+              className="rounded-xl bg-slate-100 hover:bg-slate-200 px-4 py-2.5 text-sm font-bold text-slate-600"
             >
               Batal
             </Link>

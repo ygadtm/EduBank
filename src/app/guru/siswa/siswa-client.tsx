@@ -138,14 +138,14 @@ export function SiswaTable({
         <button
           disabled={busy}
           onClick={() => reset(s.id, s.nama, s.nisNip)}
-          className="font-bold text-blue-700 disabled:opacity-50"
+          className="font-bold text-blue-700 hover:underline disabled:opacity-50"
         >
           Reset Password
         </button>
         <button
           disabled={busy}
           onClick={() => hapus(s.id, s.nama)}
-          className="ml-2 font-bold text-red-500 disabled:opacity-50"
+          className="ml-2 font-bold text-red-500 hover:underline disabled:opacity-50"
         >
           Hapus
         </button>

@@ -81,7 +81,7 @@ export default async function KelolaSoal({
       <span key="a" className="font-bold">
         <Link
           href={`/guru/soal-form?id=${d.id}${filterHref}`}
-          className="text-blue-700"
+          className="text-blue-700 hover:underline"
         >
           Ubah
         </Link>

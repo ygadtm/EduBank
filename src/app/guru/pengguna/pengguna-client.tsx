@@ -99,21 +99,21 @@ export default function PenggunaClient({
       <span key="aksi" className="flex flex-wrap justify-end gap-2 md:justify-start">
         <button
           onClick={() => setAssignId(g.id)}
-          className="font-bold text-emerald-700"
+          className="font-bold text-emerald-700 hover:underline"
         >
           Assign mapel
         </button>
         <button
           disabled={busyId === g.id}
           onClick={() => reset(g)}
-          className="font-bold text-blue-700 disabled:opacity-50"
+          className="font-bold text-blue-700 hover:underline disabled:opacity-50"
         >
           Reset password
         </button>
         <button
           disabled={busyId === g.id}
           onClick={() => hapus(g)}
-          className="font-bold text-red-500 disabled:opacity-50"
+          className="font-bold text-red-500 hover:underline disabled:opacity-50"
         >
           Hapus
         </button>
@@ -231,7 +231,7 @@ function AssignModal({
           ))}
         </div>
         <div className="mt-5 flex justify-end gap-2">
-          <button onClick={onClose} className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold text-slate-600">
+          <button onClick={onClose} className="rounded-xl bg-slate-100 hover:bg-slate-200 px-4 py-2 text-sm font-bold text-slate-600">
             Batal
           </button>
           <button disabled={busy} onClick={simpan} className={`${btn} disabled:opacity-60`}>

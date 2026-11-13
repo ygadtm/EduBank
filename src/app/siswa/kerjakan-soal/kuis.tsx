@@ -92,6 +92,7 @@ export default function Kuis({
 
   useEffect(() => {
     if (sisa <= 0) void selesai();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- selesai cukup dipanggil saat sisa berubah; selesaiRef mencegah pemanggilan ganda
   }, [sisa]);
 
   async function pick(pilihanId: string) {
@@ -211,7 +212,7 @@ export default function Kuis({
               </p>
               <button
                 onClick={lanjut}
-                className="mt-4 w-full min-h-11 rounded py-3 font-semibold text-accent-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus"
+                className="mt-4 w-full min-h-11 rounded py-3 font-semibold text-accent-ink hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus"
                 style={{ background: mapel.color }}
               >
                 {i === soal.length - 1 ? "Lihat Hasil" : "Soal Berikutnya"}

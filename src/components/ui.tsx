@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 export const card =
   "rounded-[10px] border border-line bg-surface shadow-[0_1px_2px_rgba(27,42,65,.06)]";
 export const inp =
-  "rounded border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-focus/60";
+  "rounded border border-line bg-surface px-3 py-2 text-sm text-ink outline-none transition-colors hover:border-accent/40 focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-focus/60";
 export const btn =
   "rounded bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink hover:bg-accent/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus active:bg-accent/95 disabled:cursor-not-allowed disabled:opacity-60";
 
@@ -25,7 +25,10 @@ export function PageHead({
     >
       <div className="flex items-center gap-4">
         {icon && (
-          <div className="grid h-12 w-12 place-items-center rounded-[10px] border border-accent/20 bg-accent/10 text-xl text-accent">
+          <div
+            aria-hidden="true"
+            className="grid h-12 w-12 place-items-center rounded-[10px] border border-accent/20 bg-accent/10 text-xl text-accent"
+          >
             {icon}
           </div>
         )}
@@ -55,7 +58,10 @@ export function Stat({
       <div className="flex justify-between text-sm font-semibold text-muted">
         {label}
         {icon && (
-          <span className="grid h-9 w-9 place-items-center rounded border border-line bg-paper text-accent">
+          <span
+            aria-hidden="true"
+            className="grid h-9 w-9 place-items-center rounded border border-line bg-paper text-accent"
+          >
             {icon}
           </span>
         )}
@@ -123,7 +129,7 @@ export function Tabel({
           {rows.map((r, i) => (
             <tr
               key={i}
-              className="block border-b border-line px-5 py-3 last:border-b-0 md:table-row md:m-0 md:border-b md:border-line md:px-0 md:py-0 md:last:border-b"
+              className="block border-b border-line px-5 py-3 transition-colors last:border-b-0 hover:bg-paper md:table-row md:m-0 md:border-b md:border-line md:px-0 md:py-0 md:last:border-b"
             >
               {r.map((c, j) => (
                 <td
@@ -142,17 +148,6 @@ export function Tabel({
   );
 }
 
-export function Segera({ judul }: { judul: string }) {
-  return (
-    <div className={`${card} p-8 text-center`}>
-      <h1 className="text-[22px] font-bold leading-[30px] text-ink">{judul}</h1>
-      <p className="mt-2 text-sm text-muted">
-        Halaman ini ada di versi HTML dan belum dipindahkan ke versi Next.js.
-      </p>
-    </div>
-  );
-}
-
 export function Bar({
   v,
   c = "var(--color-accent)",
@@ -161,8 +156,8 @@ export function Bar({
   c?: string;
 }) {
   return (
-    <div className="flex items-center gap-2">
-      <div className="h-2.5 w-24 overflow-hidden rounded-full bg-line">
+    <div role="img" aria-label={`Nilai ${v} persen`} className="flex items-center gap-2">
+      <div aria-hidden="true" className="h-2.5 w-24 overflow-hidden rounded-full bg-line">
         <div
           className="h-full rounded-full"
           style={{ width: `${v}%`, background: c }}

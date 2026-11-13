@@ -40,6 +40,7 @@ export default async function BankSoal() {
               className={`${card} flex flex-col p-6 transition-colors hover:border-accent/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus`}
             >
               <div
+                aria-hidden="true"
                 className="grid h-16 w-16 place-items-center rounded-2xl text-3xl"
                 style={{ background: meta.bg }}
               >

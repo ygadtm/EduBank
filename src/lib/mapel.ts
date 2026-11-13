@@ -25,7 +25,7 @@ export const MAPEL_META: Record<string, MapelMeta> = {
     bg: "#eff6ff",
   },
   ppkn: {
-    nama: "Tematik & PPKn",
+    nama: "Pendidikan Anti Korupsi",
     icon: "🛡️",
     color: "#d97706",
     bg: "#fffbeb",

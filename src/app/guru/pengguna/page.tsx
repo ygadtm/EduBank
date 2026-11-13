@@ -5,7 +5,7 @@ import { getSession } from "@/lib/session";
 import PenggunaClient from "./pengguna-client";
 
 export default async function HalamanPengguna() {
-  const admin = await requireAdmin();
+  await requireAdmin();
   const session = await getSession();
 
   const [gurus, mapels] = await Promise.all([

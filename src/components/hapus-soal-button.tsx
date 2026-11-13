@@ -16,7 +16,7 @@ export default function HapusSoalButton({ id }: { id: string }) {
         setBusy(false);
         if ("error" in hasil) alert(hasil.error);
       }}
-      className="ml-2 text-red-500 disabled:opacity-50"
+      className="ml-2 text-red-500 hover:underline disabled:opacity-50"
     >
       {busy ? "Menghapus..." : "Hapus"}
     </button>

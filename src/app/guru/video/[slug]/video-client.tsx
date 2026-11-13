@@ -143,7 +143,7 @@ function KartuVideo({
           >
             Ubah
           </button>
-          <button disabled={busy} onClick={hapus} className="text-sm font-bold text-red-500 disabled:opacity-50">
+          <button disabled={busy} onClick={hapus} className="text-sm font-bold text-red-500 hover:underline disabled:opacity-50">
             {busy ? "Menghapus..." : "Hapus"}
           </button>
         </div>
@@ -174,7 +174,7 @@ export default function VideoClient({
       <PageHead icon={icon} title={judul} sub={sub}>
         <Link
           href="/guru/video"
-          className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold text-slate-600"
+          className="rounded-xl bg-slate-100 hover:bg-slate-200 px-4 py-2 text-sm font-bold text-slate-600"
         >
           ← Semua Mapel
         </Link>

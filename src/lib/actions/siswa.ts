@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { requireAdmin, requireGuru } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { hashPassword } from "@/lib/password";
@@ -47,7 +47,6 @@ export async function tambahSiswa(
   });
 
   revalidatePath("/guru/siswa");
-  revalidateTag("siswa");
   return { ok: true };
 }
 

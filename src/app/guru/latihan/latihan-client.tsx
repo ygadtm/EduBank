@@ -150,7 +150,7 @@ export default function LatihanClient({
 
               {soalList.length === 0 && !buatSoal && !soalEdit && (
                 <div className={`${card} px-4 py-6 text-center text-sm text-slate-500`}>
-                  Paket ini belum punya soal. Klik "+ Tambah Soal" untuk mulai.
+                  Paket ini belum punya soal. Klik &quot;+ Tambah Soal&quot; untuk mulai.
                 </div>
               )}
 
@@ -164,7 +164,7 @@ export default function LatihanClient({
                     <div className="flex shrink-0 gap-2">
                       <button
                         onClick={() => { setSoalEdit(s); setBuatSoal(false); }}
-                        className="text-sm font-bold text-blue-700"
+                        className="text-sm font-bold text-blue-700 hover:underline"
                       >
                         Ubah
                       </button>
@@ -245,7 +245,7 @@ function FormMetaPaket({ mapels, paket, onSelesai }: { mapels: Mapel[]; paket?: 
         </div>
         {state.error && <p className="rounded-xl bg-red-50 px-3 py-2 text-sm font-semibold text-red-600">{state.error}</p>}
         <div className="flex gap-2">
-          <button type="button" onClick={onSelesai} className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold text-slate-600">Batal</button>
+          <button type="button" onClick={onSelesai} className="rounded-xl bg-slate-100 hover:bg-slate-200 px-4 py-2 text-sm font-bold text-slate-600">Batal</button>
           <button disabled={pending} className={`${btn} disabled:opacity-60`}>{pending ? "Menyimpan..." : "Simpan Paket"}</button>
         </div>
       </form>
@@ -335,7 +335,7 @@ function FormSoalPaket({ paketId, soal, onSelesai }: { paketId: string; soal: So
               )}
             </>
           )}
-          <button type="button" onClick={onSelesai} className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold text-slate-600">Batal</button>
+          <button type="button" onClick={onSelesai} className="rounded-xl bg-slate-100 hover:bg-slate-200 px-4 py-2 text-sm font-bold text-slate-600">Batal</button>
         </div>
       ) : (
         <form action={formAction} className="space-y-3">
@@ -367,7 +367,7 @@ function FormSoalPaket({ paketId, soal, onSelesai }: { paketId: string; soal: So
           </label>
           {state.error && <p className="rounded-xl bg-red-50 px-3 py-2 text-sm font-semibold text-red-600">{state.error}</p>}
           <div className="flex gap-2">
-            <button type="button" onClick={onSelesai} className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold text-slate-600">Batal</button>
+            <button type="button" onClick={onSelesai} className="rounded-xl bg-slate-100 hover:bg-slate-200 px-4 py-2 text-sm font-bold text-slate-600">Batal</button>
             <button disabled={pending} className={`${btn} disabled:opacity-60`}>{pending ? "Menyimpan..." : soal ? "Simpan Perubahan" : "Tambah Soal"}</button>
           </div>
         </form>
@@ -395,7 +395,7 @@ function TombolHapusPaket({ id, jumlahLatihan }: { id: string; jumlahLatihan: nu
         setBusy(false);
         if ("error" in hasil) alert(hasil.error);
       }}
-      className="shrink-0 text-xs font-bold text-red-500 disabled:opacity-50"
+      className="shrink-0 text-xs font-bold text-red-500 hover:underline disabled:opacity-50"
     >
       {busy ? "..." : terkunci ? "Hapus + riwayat" : "Hapus"}
     </button>
@@ -414,7 +414,7 @@ function TombolHapusSoal({ paketId, soalId }: { paketId: string; soalId: string 
         setBusy(false);
         if ("error" in hasil) alert(hasil.error);
       }}
-      className="text-sm font-bold text-red-500 disabled:opacity-50"
+      className="text-sm font-bold text-red-500 hover:underline disabled:opacity-50"
     >
       {busy ? "..." : "Hapus"}
     </button>

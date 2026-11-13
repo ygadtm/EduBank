@@ -11,10 +11,11 @@
   "db:deploy": "prisma migrate deploy",
   "db:seed": "prisma db seed",
   "db:studio": "prisma studio",
-   "db:check": "node --env-file=.env --import tsx prisma/check.ts",
-   "db:merge-mapel": "node --env-file=.env --import tsx prisma/merge-mapel.ts",
-   "db:format": "prisma format",
-   "check:impor": "tsx src/lib/impor-check.ts"
+  "db:check": "node --env-file=.env --import tsx prisma/check.ts",
+  "db:merge-mapel": "node --env-file=.env --import tsx prisma/merge-mapel.ts",
+  "db:format": "prisma format",
+  "check:impor": "tsx src/lib/impor-check.ts",
+    "lint": "eslint ."
  },
  "prisma": {
   "seed": "tsx prisma/seed.ts"
@@ -29,10 +30,13 @@
   "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
  },
  "devDependencies": {
+  "@eslint/eslintrc": "^3.3.7",
   "@tailwindcss/postcss": "^4.0.0",
   "@types/node": "^22.0.0",
   "@types/react": "^19.0.0",
   "@types/react-dom": "^19.0.0",
+  "eslint": "^9.39.5",
+  "eslint-config-next": "^15.5.29",
   "prisma": "^6.19.3",
   "tailwindcss": "^4.0.0",
   "tsx": "^4.23.15",

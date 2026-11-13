@@ -109,7 +109,7 @@ export default function LoginForm() {
             <button
               type="button"
               onClick={() => setGuru(!guru)}
-              className="text-sm font-semibold text-accent underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus"
+              className="text-sm font-semibold text-accent underline underline-offset-2 hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus"
             >
               Masuk sebagai {guru ? "Siswa" : "Guru"}
             </button>

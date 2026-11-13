@@ -20,7 +20,7 @@ export const MAPEL = [
   },
   {
     slug: "ppkn",
-    nama: "Tematik & PPKn",
+    nama: "Pendidikan Anti Korupsi",
     deskripsi:
       "Latihan kebersamaan, aturan bermasyarakat, dan nilai Pancasila.",
     urutan: 3,
