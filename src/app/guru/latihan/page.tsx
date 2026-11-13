@@ -1,49 +1,65 @@
+import Link from "next/link";
+import { PageHead, card } from "@/components/ui";
 import { prisma } from "@/lib/db";
-import { getMapelRingkas } from "@/lib/cache";
 import { requireGuru, getGuruScope } from "@/lib/auth";
-import LatihanClient from "./latihan-client";
+import { mapelMeta } from "@/lib/mapel";
 
 export default async function KelolaLatihan() {
   const user = await requireGuru();
   const scope = await getGuruScope(user);
 
-  const [mapels, pakets] = await Promise.all([
-    scope
-      ? prisma.mapel.findMany({
-          where: { id: { in: scope.mapelIds } },
-          orderBy: { urutan: "asc" },
-          select: { id: true, slug: true, nama: true },
-        })
-      : getMapelRingkas(),
-    prisma.paketLatihan.findMany({
-      where: scope
-        ? { mapelId: { in: scope.mapelIds }, kelas: { in: scope.kelasList } }
-        : undefined,
-      orderBy: [{ kelas: "asc" }, { urutan: "asc" }, { judul: "asc" }],
-      include: {
-        mapel: { select: { slug: true, nama: true } },
-        soal: {
-          orderBy: { urutan: "asc" },
-          select: {
-            soalId: true,
-            soal: {
-              select: {
-                id: true,
-                teks: true,
-                topik: true,
-                pembahasan: true,
-                pilihan: {
-                  orderBy: { urutan: "asc" },
-                  select: { id: true, teks: true, benar: true, urutan: true },
-                },
-              },
-            },
-          },
+  const mapels = await prisma.mapel.findMany({
+    where: scope ? { id: { in: scope.mapelIds } } : undefined,
+    orderBy: { urutan: "asc" },
+    select: {
+      id: true,
+      slug: true,
+      nama: true,
+      deskripsi: true,
+      _count: {
+        select: {
+          paketLatihan: scope ? { where: { kelas: { in: scope.kelasList } } } : true,
         },
-        _count: { select: { latihan: true } },
       },
-    }),
-  ]);
+    },
+  });
 
-  return <LatihanClient mapels={mapels} pakets={pakets} />;
+  return (
+    <>
+      <PageHead
+        icon="📝"
+        title="Paket Latihan"
+        sub="Pilih mata pelajaran untuk mengelola paket latihannya."
+      />
+      <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {mapels.map((m) => {
+          const meta = mapelMeta(m.slug);
+          const jumlah = m._count.paketLatihan;
+          return (
+            <Link
+              key={m.id}
+              href={`/guru/latihan/${m.slug}`}
+              className={`${card} mapel-card flex flex-col items-center p-5 text-center hover:border-accent/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus`}
+            >
+              <div
+                aria-hidden="true"
+                className="mapel-card-icon grid h-14 w-14 place-items-center rounded-2xl text-2xl"
+                style={{ background: meta.bg }}
+              >
+                {meta.icon}
+              </div>
+              <h2 className="mt-3 text-base font-bold text-ink">{m.nama}</h2>
+              <p className="mt-1 flex-1 text-xs text-muted line-clamp-2">{m.deskripsi}</p>
+              <span
+                className="mt-3 rounded px-2.5 py-1 text-xs font-semibold"
+                style={{ color: meta.color, background: meta.bg }}
+              >
+                {jumlah === 0 ? "Belum ada paket" : `${jumlah} paket`}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    </>
+  );
 }

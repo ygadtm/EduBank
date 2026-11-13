@@ -12,6 +12,27 @@ function teks(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
 }
 
+function revalidateLatihanSlug(slug?: string | null) {
+  revalidatePath("/guru/latihan");
+  if (slug) revalidatePath(`/guru/latihan/${slug}`);
+}
+
+async function slugMapel(mapelId: string) {
+  const mapel = await prisma.mapel.findUnique({
+    where: { id: mapelId },
+    select: { slug: true },
+  });
+  return mapel?.slug ?? null;
+}
+
+async function slugMapelDariPaket(paketId: string) {
+  const paket = await prisma.paketLatihan.findUnique({
+    where: { id: paketId },
+    select: { mapel: { select: { slug: true } } },
+  });
+  return paket?.mapel.slug ?? null;
+}
+
 export async function simpanPaket(
   _prev: PaketFormState,
   formData: FormData,
@@ -142,18 +163,21 @@ export async function simpanPaket(
   }
 
   revalidatePath("/guru/latihan");
+  revalidatePath(`/guru/latihan/${mapel.slug}`);
   revalidatePath("/guru/beranda");
   revalidatePath("/siswa/bank-soal");
   revalidatePath(`/siswa/bank-soal/${mapel.slug}`);
   revalidatePath("/siswa/beranda");
   revalidateTag("paket");
-  redirect("/guru/latihan");
+  redirect(`/guru/latihan/${mapel.slug}`);
 }
 
 export async function hapusPaket(
   id: string,
 ): Promise<{ ok: true } | { error: string }> {
   await requireGuru();
+
+  const slug = await slugMapelDariPaket(id);
 
   try {
     await prisma.paketLatihan.delete({ where: { id } });
@@ -171,7 +195,7 @@ export async function hapusPaket(
     return { error: "Paket latihan gagal dihapus." };
   }
 
-  revalidatePath("/guru/latihan");
+  revalidateLatihanSlug(slug);
   revalidatePath("/guru/beranda");
   revalidatePath("/siswa/bank-soal");
   revalidatePath("/siswa/beranda");
@@ -183,6 +207,8 @@ export async function hapusPaketDanRiwayat(
   id: string,
 ): Promise<{ ok: true } | { error: string }> {
   await requireGuru();
+
+  const slug = await slugMapelDariPaket(id);
 
   try {
     await prisma.$transaction(async (tx) => {
@@ -199,7 +225,7 @@ export async function hapusPaketDanRiwayat(
     return { error: "Paket latihan gagal dihapus." };
   }
 
-  revalidatePath("/guru/latihan");
+  revalidateLatihanSlug(slug);
   revalidatePath("/guru/rekap");
   revalidatePath("/guru/beranda");
   revalidatePath("/siswa/bank-soal");
@@ -238,12 +264,15 @@ export async function simpanMetaPaket(
   const lama = id
     ? await prisma.paketLatihan.findUnique({
         where: { id },
-        select: { mapelId: true, kelas: true, _count: { select: { latihan: true } } },
+        select: { mapelId: true, kelas: true, mapel: { select: { slug: true } }, _count: { select: { latihan: true } } },
       })
     : null;
   if (id && !lama) return { error: "Paket tidak ditemukan." };
   if (lama && lama._count.latihan > 0 && (lama.mapelId !== mapelId || lama.kelas !== kelas))
     return { error: "Paket sudah dikerjakan siswa. Mapel dan kelas tidak boleh diubah." };
+
+  const slugBaru = await slugMapel(mapelId);
+  if (!slugBaru) return { error: "Mapel tidak ditemukan." };
 
   const data = { mapelId, kelas, judul, deskripsi, urutan, durasiMenit, status };
 
@@ -259,7 +288,8 @@ export async function simpanMetaPaket(
     return { error: "Paket gagal disimpan." };
   }
 
-  revalidatePath("/guru/latihan");
+  revalidateLatihanSlug(slugBaru);
+  if (lama && lama.mapel.slug !== slugBaru) revalidateLatihanSlug(lama.mapel.slug);
   revalidatePath("/siswa/bank-soal");
   revalidateTag("paket");
   return { error: "" };
@@ -293,6 +323,8 @@ export async function simpanSoalKePaket(
     select: { id: true, mapelId: true, kelas: true, _count: { select: { soal: true } } },
   });
   if (!paket) return { error: "Paket tidak ditemukan." };
+
+  const slug = await slugMapel(paket.mapelId);
 
   try {
     await prisma.$transaction(async (tx) => {
@@ -346,7 +378,7 @@ export async function simpanSoalKePaket(
     return { error: "Soal gagal disimpan." };
   }
 
-  revalidatePath("/guru/latihan");
+  revalidateLatihanSlug(slug);
   revalidatePath("/siswa/bank-soal");
   revalidateTag("soal");
   revalidateTag("paket");
@@ -407,7 +439,7 @@ export async function tambahSoalBankKePaket(
     return { error: "Gagal menambahkan soal." };
   }
 
-  revalidatePath("/guru/latihan");
+  revalidateLatihanSlug(await slugMapel(paket.mapelId));
   revalidatePath("/siswa/bank-soal");
   revalidateTag("soal");
   revalidateTag("paket");
@@ -419,6 +451,8 @@ export async function hapusSoalDariPaket(
   soalId: string,
 ): Promise<{ ok: true } | { error: string }> {
   await requireGuru();
+
+  const slug = await slugMapelDariPaket(paketId);
 
   try {
     await prisma.$transaction(async (tx) => {
@@ -437,7 +471,7 @@ export async function hapusSoalDariPaket(
     return { error: "Soal gagal dihapus." };
   }
 
-  revalidatePath("/guru/latihan");
+  revalidateLatihanSlug(slug);
   revalidatePath("/siswa/bank-soal");
   revalidateTag("soal");
   revalidateTag("paket");

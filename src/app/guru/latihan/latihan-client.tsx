@@ -18,7 +18,7 @@ import { mapelMeta } from "@/lib/mapel";
 
 const lab = "block text-xs font-bold text-slate-600";
 
-type Mapel = { id: string; slug: string; nama: string };
+type Mapel = { id: string; slug: string; nama: string; deskripsi?: string | null };
 type Pilihan = { id: string; teks: string; benar: boolean; urutan: number };
 type Soal = {
   id: string;
@@ -43,9 +43,11 @@ type Paket = {
 };
 
 export default function LatihanClient({
+  mapel,
   mapels,
   pakets,
 }: {
+  mapel?: Mapel;
   mapels: Mapel[];
   pakets: Paket[];
 }) {
@@ -58,9 +60,20 @@ export default function LatihanClient({
 
   return (
     <>
-      <PageHead title="Paket Latihan" sub="Kelola paket dan soal latihan." />
+      <div className="mb-3">
+        <Link
+          href="/guru/latihan"
+          className="inline-flex items-center gap-1 text-sm font-bold text-blue-700 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus"
+        >
+          ← Semua Mapel
+        </Link>
+      </div>
+      <PageHead
+        title={mapel ? `Paket Latihan · ${mapel.nama}` : "Paket Latihan"}
+        sub="Kelola paket dan soal latihan."
+      />
       <div className="mt-5 grid gap-5 xl:grid-cols-5 xl:items-start">
-        <aside className="space-y-3 xl:col-span-2 xl:sticky xl:top-4 xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto xl:pr-1">
+        <aside className="space-y-3 xl:col-span-2 xl:sticky xl:top-4 xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto xl:overscroll-contain xl:pr-1">
           <button
             onClick={() => { setBuatPaket(true); setPaketAktif(null); setSoalEdit(null); setBuatSoal(false); }}
             className={`${btn} w-full`}
@@ -68,7 +81,7 @@ export default function LatihanClient({
             + Buat Paket Baru
           </button>
           {buatPaket && (
-            <FormMetaPaket mapels={mapels} onSelesai={() => setBuatPaket(false)} />
+            <FormMetaPaket mapel={mapel} mapels={mapels} onSelesai={() => setBuatPaket(false)} />
           )}
           {pakets.length === 0 && !buatPaket && (
             <p className={`${card} px-4 py-6 text-center text-sm text-slate-500`}>
@@ -82,7 +95,7 @@ export default function LatihanClient({
               <div
                 key={p.id}
                 onClick={() => { setPaketAktif(p); setBuatPaket(false); setSoalEdit(null); setBuatSoal(false); }}
-                className={`${card} cursor-pointer p-4 transition-all ${aktif ? "ring-2 ring-blue-500" : "hover:ring-1 hover:ring-slate-300"}`}
+                className={`${card} paket-card cursor-pointer p-4 ${aktif ? "ring-2 ring-blue-500" : "hover:ring-1 hover:ring-slate-300"}`}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
@@ -115,7 +128,7 @@ export default function LatihanClient({
           })}
         </aside>
 
-        <section className="xl:col-span-3 xl:sticky xl:top-4 xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto xl:pr-1">
+        <section className="xl:col-span-3 xl:sticky xl:top-4 xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto xl:overscroll-contain xl:pr-1">
           {!paketAktif && !buatPaket && (
             <div className={`${card} p-8 text-center text-sm text-slate-500`}>
               Pilih paket di kiri untuk mengelola soalnya.
@@ -140,56 +153,58 @@ export default function LatihanClient({
                 </div>
               </div>
 
-              {(buatSoal || soalEdit) && (
-                <FormSoalPaket
-                  paketId={paketAktif.id}
-                  soal={soalEdit}
-                  onSelesai={() => { setBuatSoal(false); setSoalEdit(null); }}
-                />
-              )}
+              <div className="max-h-[60vh] space-y-4 overflow-y-auto overscroll-contain pr-1 md:max-h-none md:overflow-visible md:pr-0">
+                {(buatSoal || soalEdit) && (
+                  <FormSoalPaket
+                    paketId={paketAktif.id}
+                    soal={soalEdit}
+                    onSelesai={() => { setBuatSoal(false); setSoalEdit(null); }}
+                  />
+                )}
 
-              {soalList.length === 0 && !buatSoal && !soalEdit && (
-                <div className={`${card} px-4 py-6 text-center text-sm text-slate-500`}>
-                  Paket ini belum punya soal. Klik &quot;+ Tambah Soal&quot; untuk mulai.
-                </div>
-              )}
-
-              {soalList.map((s, i) => (
-                <div key={s.id} className={`${card} p-5`}>
-                  <div className="flex items-start justify-between gap-3">
-                    <p className="font-semibold">
-                      <span className="mr-2 text-slate-400">{i + 1}.</span>
-                      {s.teks}
-                    </p>
-                    <div className="flex shrink-0 gap-2">
-                      <button
-                        onClick={() => { setSoalEdit(s); setBuatSoal(false); }}
-                        className="text-sm font-bold text-blue-700 hover:underline"
-                      >
-                        Ubah
-                      </button>
-                      <TombolHapusSoal paketId={paketAktif.id} soalId={s.id} />
-                    </div>
+                {soalList.length === 0 && !buatSoal && !soalEdit && (
+                  <div className={`${card} px-4 py-6 text-center text-sm text-slate-500`}>
+                    Paket ini belum punya soal. Klik &quot;+ Tambah Soal&quot; untuk mulai.
                   </div>
-                  <div className="mt-3 grid gap-1.5">
-                    {s.pilihan.map((p, k) => (
-                      <div
-                        key={p.id}
-                        className={`rounded-xl border px-3 py-2 text-sm ${p.benar ? "border-emerald-400 bg-emerald-50 font-bold text-emerald-800" : "border-slate-100 text-slate-600"}`}
-                      >
-                        <span className="mr-2 font-bold text-slate-400">{"ABCD"[k]}.</span>
-                        {p.teks}
-                        {p.benar && <span className="ml-2 text-xs">✓ Kunci</span>}
+                )}
+
+                {soalList.map((s, i) => (
+                  <div key={s.id} className={`${card} p-5`}>
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="font-semibold">
+                        <span className="mr-2 text-slate-400">{i + 1}.</span>
+                        {s.teks}
+                      </p>
+                      <div className="flex shrink-0 gap-2">
+                        <button
+                          onClick={() => { setSoalEdit(s); setBuatSoal(false); }}
+                          className="text-sm font-bold text-blue-700 hover:underline"
+                        >
+                          Ubah
+                        </button>
+                        <TombolHapusSoal paketId={paketAktif.id} soalId={s.id} />
                       </div>
-                    ))}
-                  </div>
-                  {s.topik && (
+                    </div>
+                    <div className="mt-3 grid gap-1.5">
+                      {s.pilihan.map((p, k) => (
+                        <div
+                          key={p.id}
+                          className={`rounded-xl border px-3 py-2 text-sm ${p.benar ? "border-emerald-400 bg-emerald-50 font-bold text-emerald-800" : "border-slate-100 text-slate-600"}`}
+                        >
+                          <span className="mr-2 font-bold text-slate-400">{"ABCD"[k]}.</span>
+                          {p.teks}
+                          {p.benar && <span className="ml-2 text-xs">✓ Kunci</span>}
+                        </div>
+                      ))}
+                    </div>
+                    {s.topik && (
                       <span className="mt-2 inline-block rounded bg-accent/10 px-2 py-1 text-xs font-semibold text-accent">
                         {s.topik}
                       </span>
-                  )}
-                </div>
-              ))}
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </section>
@@ -198,7 +213,7 @@ export default function LatihanClient({
   );
 }
 
-function FormMetaPaket({ mapels, paket, onSelesai }: { mapels: Mapel[]; paket?: Paket; onSelesai: () => void }) {
+function FormMetaPaket({ mapel, mapels, paket, onSelesai }: { mapel?: Mapel; mapels: Mapel[]; paket?: Paket; onSelesai: () => void }) {
   const [state, formAction, pending] = useActionState<MetaPaketState, FormData>(simpanMetaPaket, { error: "" });
   return (
     <div className={`${card} p-5`}>
@@ -207,7 +222,7 @@ function FormMetaPaket({ mapels, paket, onSelesai }: { mapels: Mapel[]; paket?: 
         {paket && <input type="hidden" name="id" value={paket.id} />}
         <label className={lab}>
           Mapel
-          <select name="mapelId" defaultValue={paket?.mapelId ?? mapels[0]?.id} className={`${inp} mt-1 w-full`}>
+          <select name="mapelId" defaultValue={paket?.mapelId ?? mapel?.id ?? mapels[0]?.id} className={`${inp} mt-1 w-full`}>
             {mapels.map((m) => <option key={m.id} value={m.id}>{m.nama}</option>)}
           </select>
         </label>

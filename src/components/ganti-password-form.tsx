@@ -7,13 +7,14 @@ import { btn, inp } from "@/components/ui";
 const lbl = "block space-y-1.5 text-sm font-semibold text-ink";
 const fld = `${inp} w-full`;
 
-export default function GantiPasswordForm() {
+export default function GantiPasswordForm({ balik }: { balik?: string }) {
   const [state, formAction, pending] = useActionState(gantiPassword, {
     error: "",
   });
 
   return (
     <form action={formAction} className="space-y-4">
+      {balik && <input type="hidden" name="balik" value={balik} />}
       <label className={lbl}>
         Password lama
         <input

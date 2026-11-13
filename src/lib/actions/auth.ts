@@ -83,6 +83,7 @@ export async function gantiPassword(
   const lama = String(formData.get("lama") ?? "");
   const baru = String(formData.get("baru") ?? "");
   const ulang = String(formData.get("ulang") ?? "");
+  const balik = String(formData.get("balik") ?? "");
 
   if (!lama || !baru || !ulang) {
     return { error: "Semua kolom wajib diisi." };
@@ -115,5 +116,7 @@ export async function gantiPassword(
   if (!session) redirect("/");
   await setSessionCookie({ id: user.id, role: lengkap.role });
 
-  redirect(lengkap.role === "GURU" ? "/guru/beranda" : "/siswa/beranda");
+  const tujuan =
+    balik.startsWith("/guru/") || balik.startsWith("/siswa/") ? balik : null;
+  redirect(tujuan ?? (lengkap.role === "GURU" ? "/guru/beranda" : "/siswa/beranda"));
 }

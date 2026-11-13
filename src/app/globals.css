@@ -18,3 +18,65 @@ body {
   background: var(--color-paper);
   color: var(--color-ink);
 }
+
+.mapel-card {
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+.mapel-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 10px 24px rgba(27, 42, 65, 0.12);
+}
+
+.mapel-card:hover .mapel-card-icon {
+  transform: scale(1.1) rotate(-4deg);
+}
+
+.mapel-card-icon {
+  transition: transform 200ms ease;
+}
+
+.mapel-card:active {
+  transform: translateY(-1px) scale(0.99);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mapel-card,
+  .mapel-card-icon {
+    transition: none;
+  }
+  .mapel-card:hover,
+  .mapel-card:hover .mapel-card-icon,
+  .mapel-card:active {
+    transform: none;
+  }
+}
+
+.paket-card {
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.paket-card:hover {
+  transform: translateX(3px);
+  box-shadow: 0 6px 16px rgba(27, 42, 65, 0.1);
+}
+
+.paket-card:active {
+  transform: translateX(1px) scale(0.995);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paket-card {
+    transition: none;
+  }
+  .paket-card:hover,
+  .paket-card:active {
+    transform: none;
+  }
+}

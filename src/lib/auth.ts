@@ -12,6 +12,8 @@ const userSelect = {
   aktif: true,
   admin: true,
   harusGantiPassword: true,
+  lastLoginAt: true,
+  createdAt: true,
 } as const;
 
 const loadUser = cache((id: string) =>
