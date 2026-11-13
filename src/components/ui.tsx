@@ -99,7 +99,7 @@ export function StatusBadge({ s }: { s: string }) {
   );
 }
 
-// Tabel di desktop, kartu per baris di HP.
+// Tabel di desktop, daftar per baris di HP.
 export function Tabel({
   head,
   rows,
@@ -123,13 +123,13 @@ export function Tabel({
           {rows.map((r, i) => (
             <tr
               key={i}
-              className="mx-4 mb-3 block rounded-[10px] border border-line p-3 md:m-0 md:table-row md:rounded-none md:border-0 md:border-b md:border-line md:p-0"
+              className="block border-b border-line px-5 py-3 last:border-b-0 md:table-row md:m-0 md:border-b md:border-line md:px-0 md:py-0 md:last:border-b"
             >
               {r.map((c, j) => (
                 <td
                   key={j}
                   data-label={head[j]}
-                  className="flex items-center justify-between gap-3 py-1.5 before:text-xs before:font-semibold before:text-muted before:content-[attr(data-label)] md:table-cell md:px-4 md:py-3 md:before:content-none"
+                  className="flex items-start justify-between gap-3 py-1.5 before:text-xs before:font-semibold before:text-muted before:content-[attr(data-label)] md:table-cell md:px-4 md:py-3 md:before:content-none"
                 >
                   {c}
                 </td>

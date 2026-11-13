@@ -8,7 +8,7 @@ export const MAPEL = [
   },
   {
     slug: "ipa",
-    nama: "IPAS (Ilmu Pengetahuan Alam dan Sosial)",
+    nama: "IPAS",
     deskripsi: "Latihan sains, ekosistem, energi, dan siklus alam.",
     urutan: 1,
   },

@@ -4,7 +4,7 @@ import { useActionState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { hapusGuru, resetPasswordGuru, tambahGuru, setGuruMapel } from "@/lib/actions/pengguna";
-import { btn, card, inp } from "@/components/ui";
+import { btn, card, inp, Tabel } from "@/components/ui";
 
 type GuruMapelItem = { mapelId: string; kelas: number };
 
@@ -59,6 +59,68 @@ export default function PenggunaClient({
 
   const assigningGuru = assignId ? gurus.find((g) => g.id === assignId) ?? null : null;
 
+  const rows = gurus.map((g) => [
+    <span key="n">
+      <b>{g.nama}</b>
+      {g.idDiri && (
+        <span className="ml-2 rounded bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
+          Anda
+        </span>
+      )}
+    </span>,
+    <span key="nip" className="text-slate-600">
+      {g.nisNip}
+    </span>,
+    <span
+      key="peran"
+      className={`rounded-full px-2.5 py-1 text-xs font-bold ${
+        g.admin ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"
+      }`}
+    >
+      {g.admin ? "Admin" : "Guru"}
+    </span>,
+    <span key="mapel" className="text-xs text-slate-500">
+      {g.guruMapel.length === 0 ? (
+        <span className="italic">Belum ada</span>
+      ) : (
+        [5, 6].map((kelas) => {
+          const ids = g.guruMapel.filter((x) => x.kelas === kelas).map((x) => x.mapelId);
+          if (ids.length === 0) return null;
+          const names = ids.map((id) => mapels.find((m) => m.id === id)?.nama ?? id).join(", ");
+          return <span key={kelas} className="block">Kelas {kelas}: {names}</span>;
+        })
+      )}
+    </span>,
+    g.idDiri ? (
+      <span key="aksi" className="text-xs text-slate-400">
+        Tidak bisa diubah
+      </span>
+    ) : (
+      <span key="aksi" className="flex flex-wrap justify-end gap-2 md:justify-start">
+        <button
+          onClick={() => setAssignId(g.id)}
+          className="font-bold text-emerald-700"
+        >
+          Assign mapel
+        </button>
+        <button
+          disabled={busyId === g.id}
+          onClick={() => reset(g)}
+          className="font-bold text-blue-700 disabled:opacity-50"
+        >
+          Reset password
+        </button>
+        <button
+          disabled={busyId === g.id}
+          onClick={() => hapus(g)}
+          className="font-bold text-red-500 disabled:opacity-50"
+        >
+          Hapus
+        </button>
+      </span>
+    ),
+  ]);
+
   return (
     <>
       <section className={`${card} mt-3 p-5`}>
@@ -85,79 +147,10 @@ export default function PenggunaClient({
       </section>
 
       <section className="mt-3 rounded-2xl bg-white shadow-[0_2px_12px_rgba(30,64,175,.08)]">
-        <table className="w-full text-left text-sm">
-          <thead>
-            <tr className="border-b border-line text-xs text-slate-500">
-              <th className="px-4 py-3 font-semibold">Nama</th>
-              <th className="px-4 py-3 font-semibold">NIP</th>
-              <th className="px-4 py-3 font-semibold">Peran</th>
-              <th className="px-4 py-3 font-semibold">Mapel & Kelas</th>
-              <th className="px-4 py-3 font-semibold">Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {gurus.map((g) => (
-              <tr key={g.id} className="border-b border-line last:border-0">
-                <td className="px-4 py-3">
-                  <b>{g.nama}</b>
-                  {g.idDiri && <span className="ml-2 rounded bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">Anda</span>}
-                </td>
-                <td className="px-4 py-3 text-slate-600">{g.nisNip}</td>
-                <td className="px-4 py-3">
-                  <span
-                    className={`rounded-full px-2.5 py-1 text-xs font-bold ${
-                      g.admin ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"
-                    }`}
-                  >
-                    {g.admin ? "Admin" : "Guru"}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-xs text-slate-500">
-                  {g.guruMapel.length === 0 ? (
-                    <span className="italic">Belum ada</span>
-                  ) : (
-                    <span>
-                      {[5, 6].map((kelas) => {
-                        const ids = g.guruMapel.filter((x) => x.kelas === kelas).map((x) => x.mapelId);
-                        if (ids.length === 0) return null;
-                        const names = ids.map((id) => mapels.find((m) => m.id === id)?.nama ?? id).join(", ");
-                        return <span key={kelas} className="block">Kelas {kelas}: {names}</span>;
-                      })}
-                    </span>
-                  )}
-                </td>
-                <td className="px-4 py-3">
-                  {g.idDiri ? (
-                    <span className="text-xs text-slate-400">Tidak bisa diubah</span>
-                  ) : (
-                    <span className="flex flex-wrap gap-2">
-                      <button
-                        onClick={() => setAssignId(g.id)}
-                        className="font-bold text-emerald-700"
-                      >
-                        Assign mapel
-                      </button>
-                      <button
-                        disabled={busyId === g.id}
-                        onClick={() => reset(g)}
-                        className="font-bold text-blue-700 disabled:opacity-50"
-                      >
-                        Reset password
-                      </button>
-                      <button
-                        disabled={busyId === g.id}
-                        onClick={() => hapus(g)}
-                        className="font-bold text-red-500 disabled:opacity-50"
-                      >
-                        Hapus
-                      </button>
-                    </span>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Tabel
+          head={["Nama", "NIP", "Peran", "Mapel & Kelas", "Aksi"]}
+          rows={rows}
+        />
       </section>
 
       {assigningGuru && (

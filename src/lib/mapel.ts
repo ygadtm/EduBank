@@ -13,7 +13,7 @@ export const MAPEL_META: Record<string, MapelMeta> = {
     bg: "#fef2f2",
   },
   ipa: {
-    nama: "IPAS (Ilmu Pengetahuan Alam dan Sosial)",
+    nama: "IPAS",
     icon: "🌿",
     color: "#059669",
     bg: "#ecfdf5",
