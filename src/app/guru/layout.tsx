@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import AppShell from "@/components/AppShell";
 import { requireGuru } from "@/lib/auth";
+
+// Area privat: jangan diindeks mesin pencari.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default async function Layout({
   children,
