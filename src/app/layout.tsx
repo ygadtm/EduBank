@@ -28,6 +28,9 @@ export const metadata: Metadata = {
     "website edubank sdn 1 fajar baru",
   ],
   applicationName: "EduBank",
+  verification: {
+    google: "D2zr4xFgraJUo3ypogH1Vg42Di-tpn2INoO7NLzNcxw",
+  },
   openGraph: {
     type: "website",
     locale: "id_ID",
